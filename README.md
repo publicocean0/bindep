@@ -6,7 +6,7 @@
   "font":"font/*"
   },
   "defaults":{
-"preprocessor":{"c":4},//default context for preprocessor
+"preprocessor":{"c":4},//default context for preprocessor(if you active it)
 "includes":{"filedetector":["image"]},	//submodules used 
 },
   "modules":{
