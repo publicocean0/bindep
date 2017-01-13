@@ -158,7 +158,7 @@ Let `bind` work its magic:
 
 ### [Grunt](http://gruntjs.com)
 
-See [`grunt-resourcesbinder`](https://github.com/publicocean0/bindep).
+See [`bindep`](https://github.com/publicocean0/bindep).
 
 
 
