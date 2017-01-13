@@ -248,7 +248,7 @@ This package is used personally, but it might be extended with new features.
 Copyright (c) 2015 Lorenzetto Cristian. Licensed under the MIT license.
 
 ## To do
-There is no way for importing optional sub-module in a dependency. Unfortunatelly bower don't support extended syntax included in the round parenthesis like this plugin so for skipping the problem we can add a json new property like optionals:["<namedep/namesubmodule>",...]
+Not all features implemented are tested so much. I will test them in the time using them in the real projects.
 
 
 
