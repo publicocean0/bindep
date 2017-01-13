@@ -5,6 +5,10 @@
   "mp3":"mp3/*",
   "font":"font/*"
   },
+  "defaults":{
+"preprocessor":{"c":4},//default context for preprocessor
+"includes":{"filedetector":["image"]},	//submodules used 
+},
   "modules":{
    "linkPreviewInterceptor":{
    "main":["js/linkPreviewInterceptor.js"],
