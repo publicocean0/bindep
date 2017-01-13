@@ -1,4 +1,4 @@
-# ResourcesBinder
+# Bindep
 > Bind bower or local dependencies to your source code.It can manage binary resources and text attachments (css,javascript,...).It permits to extends bower json for handling submodules. Bottom you can see a example:
 ```js
   "resources": {
