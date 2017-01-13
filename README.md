@@ -228,9 +228,9 @@ resources:{img:{target:"img/",global:false}
 
 }
 });
-	grunt.loadNpmTasks('grunt-resourcesbinder');
+	grunt.loadNpmTasks('bindep');
 	// Default task(s).
-	grunt.registerTask('default', ['resourcesbinder' ]);
+	grunt.registerTask('default', ['bindep' ]);
 
 };
 ```
