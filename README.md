@@ -213,7 +213,7 @@ var project=(grunt.option( "project" )==undefined)?'':grunt.option( "project" );
 grunt.initConfig({
 // Before generating any new files, remove any previously-created files.
 
-resourcesbinder: {
+bindep: {
 default_options: {
 templates:{target:'target/'+project+'/WEB-INF/ftl/',sources:['src/main/ftl/**/*.ftl']},
 development:grunt.option( "dev" )!==undefined,
