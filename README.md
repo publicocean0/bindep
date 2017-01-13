@@ -19,7 +19,7 @@
 Install the module with [npm](https://npmjs.org): 
 
 ```bash
-$ npm install --save grunt-resourcesbinder
+$ npm install --save bindep
 ```
 
 Install your [bower](http://bower.io) dependencies (if you haven't already):
