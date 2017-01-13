@@ -212,7 +212,8 @@ type: '',
 name: '',
 dependencies: {},
 resources:{},
-modules:{}
+modules:{},
+defaults:{}
 };
 
 if (dep.name=='')	dep.name=component;
@@ -255,6 +256,7 @@ dep.type = fileTypes;
 dep.resources=resources;
 dep.modules=modules;
 dep.name = componentConfigFile.name;
+dep.defaults=componentConfigFile.defaults||{};
 
 var depIsExcluded = $._.find(config.get('exclude'), function (pattern) {
 return $.path.join(config.get('bower-directory'), component).match(pattern);
@@ -330,7 +332,7 @@ for(var k in f.resources){
 resources[k]=filterFiles(f.resources[k],exclude);		
 }
 
-return {cwd:f.cwd,modules:f.modules, main:filterFiles(f.main,exclude,t),resources:resources, dependencies:collectDependencies(gdeps,parentdep,f.dependencies)
+return {defaults:f.defaults,cwd:f.cwd,modules:f.modules, main:filterFiles(f.main,exclude,t),resources:resources, dependencies:collectDependencies(gdeps,parentdep,f.dependencies)
 };}
 
 

@@ -26,6 +26,6 @@ grunt.loadTasks('tasks');
 grunt.loadNpmTasks('grunt-contrib-internal');
 // Whenever the "test" task is run, first clean the "tmp" dir, then run this
 // plugin's task(s), then test the result.
-grunt.registerTask('default', ['resourcesbinder']);
+grunt.registerTask('default', ['bindep']);
 
 };

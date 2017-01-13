@@ -2,12 +2,13 @@
 'use strict';
 module.exports = function(grunt) {
 // Internal lib.
+var PARAM=/([a-z0-9\-]+)\s*\:\s*((true|false)|(\d+(\.\d+)?)|("((?:\\.|[^"\\\\])*))")/igm;
 var BLOCK=/^@bind:*(\S*)\s+(inline|linked)\s+(separated|aggregated)\s*(\s+(uglified|minified)\s*)?$/i;
-var DEPBLOCK=/^\s*((#.*)?|(([a-zA-Z0-9_\-.]+)(\s*\(\s*(([a-zA-Z0-9_\-.]+)(\s*,\s*([a-zA-Z0-9_\-.]+))*)\s*\)\s*)?(\s*\[((=\~)|(!\~)|(==)|(!=)|(=\^)|(!\^)|(=\$)|(!\$)|(=\?)|(!\?))\s+"(.*)"\s*\])?(\s+nodeps)?(\s+nounique)?\s*))$/i;
-var md5 = require('MD5');
+var DEPBLOCK=/^\s*((#.*)?|(([a-zA-Z0-9_\-.]+)(\s*\(\s*(([a-zA-Z0-9_\-.]+)(\s*,\s*([a-zA-Z0-9_\-.]+))*)\s*\)\s*)?(\s*\[((=\~)|(!\~)|(==)|(!=)|(=\^)|(!\^)|(=\$)|(!\$)|(=\?)|(!\?))\s+"(.*)"\s*\])?(\s+nodeps)?(\s+nounique)?(\s+preprocess\s*\(\s*(([a-z0-9\-]+\s*\:\s*((true|false)|(\d+(\.\d+)?)|("((?:\\.|[^"\\\\])*)")))(\s+([a-z0-9\-]+\s*\:\s*(true|false)|(\d+(\.\d+)?)|("((?:\\.|[^"\\\\])*)")))*)?\s*\))?\s*))$/i;
+var md5 = require('md5-hex'); 
 var jsParser = require("uglify-js");
 var cssParser = require('uglifycss');
-grunt.registerMultiTask('resourcesbinder', 'embedding files', function() {
+grunt.registerMultiTask('bindep', 'embedding files', function() {
 // Merge task-specific and/or target-specific options with these defaults.
 
 var options =extend({
@@ -31,12 +32,14 @@ css:{replacement:{link:'<link rel="stylesheet" href="/css/{{file}}" />',inline:'
 resources:{}
 
 },this.data);
+options.development=true;
 var $ = {
 bowerConfig: require('bower-config'),
  _: require('lodash'),
 fs: require('fs'),
 path: require('path'),
-glob:require('glob')
+glob:require('glob'),
+preprocessor:require('preprocessor')
 };
 var currentDir=process.cwd()+'/';
 var cwd = options.cwd ? $.path.resolve(options.cwd)+'/' : currentDir;
@@ -73,7 +76,7 @@ if (!((dd instanceof String)||typeof(dd)=='string') ) throw new Error('resource 
 
 }
 
-
+var uniquePreprocessedFiles={};
 var helpers = require('./lib/helpers');
 var config = module.exports.config = helpers.createStore();
 
@@ -187,8 +190,9 @@ function getCollapsedFile(filepath,index){
 return removeExtension(getFileName(filepath))+'_'+index+".collapsed"
 }
 
-function renderLinkFile(depname,mimified,filetype){
-return depname+"."+(mimified?'min.':'')+filetype;
+function renderLinkFile(depname,mimified,filetype,preprocess){
+var f=depname+"."+(mimified?'min.':'')+filetype;
+return preprocess?getUniqueDest(f,preprocess):f;
 } 
 
 function getSourceReplacement(repl,source){
@@ -197,9 +201,9 @@ return repl.replace('{{source}}',source)+options.separator
 
 }
 
-function getLinkReplacement(repl,depname,mimified,filetype){
+function getLinkReplacement(repl,depname,mimified,filetype,preprocessor){
 	// the path of file is inside the replacement because front-end logic is unknow here
-return repl.replace('{{file}}',renderLinkFile(depname,mimified,filetype))+options.separator
+return repl.replace('{{file}}',renderLinkFile(depname,mimified,filetype,preprocessor))+options.separator
 }
  function getAbsolutePath(f){
 if (f.indexOf($.path.sep)==0) return f;
@@ -252,12 +256,12 @@ function filterMains(mains,op,filter){
 			   } else return mains;
 }
 
-function inject(replacetype,aggrtype,buffer,repl,bf,ismini,blocktype,commands,collapsedFiles,m,dest,minified,ext){
+function inject(replacetype,aggrtype,buffer,repl,bf,ismini,blocktype,commands,collapsedFiles,m,dest,minified,ext,_preprocess){
 	
 	    if (replacetype==='linked') {
 			     if (aggrtype=='separated') {
-					 buffer+=getLinkReplacement(repl,bf,ismini,blocktype);
-					 commands.push({command:'cp',source:m,dest:dest+renderLinkFile(bf,ismini,blocktype),minified:minified});
+					 buffer+=getLinkReplacement(repl,bf,ismini,blocktype,_preprocess);
+					 commands.push({command:'cp',source:m,dest:dest+renderLinkFile(bf,ismini,blocktype,_preprocess),minified:minified,preprocess:_preprocess});
 			     } else {
 					 collapsedFiles.push(m);
 				 }
@@ -265,10 +269,12 @@ function inject(replacetype,aggrtype,buffer,repl,bf,ismini,blocktype,commands,co
 					  var tmp; 
 					  if (aggrtype=='separated') {
 						    tmp=getContent(m);
+						    if (_preprocess) tmp=preprocessor(tmp,_preprocess);
 						    if (ismini) tmp=options.minifyHandlers[blocktype](tmp,minified!='minified');
 						    buffer+=(ext!=blocktype)?getSourceReplacement(repl,tmp):tmp;
 					  } else {
 						  tmp=getContent(m);
+						  if (_preprocess) tmp=preprocessor(tmp,_preprocess);
 						  buffer+=tmp;
 					  }
 				    
@@ -302,7 +308,7 @@ function processDeps(subdeps,smains,norepeat,ftypedeps,adeps,gdeps,blocktype,fou
 					   
 					   
 					   var mains=depi.main;
-						
+					   var preprocess=depi.defaults.preprocessor;
 					   for(j=0;j<mains.length;j++){
 					   var m=mains[j];  
 					   if (gdeps[blocktype][name].indexOf(m)>=0) continue;
@@ -320,7 +326,7 @@ function processDeps(subdeps,smains,norepeat,ftypedeps,adeps,gdeps,blocktype,fou
 						var bf= removeExtension(getFileName(m));  
 						if (!options.shortLinks) bf=name+"."+bf;  
 				
-						buffer=inject(replacetype,aggrtype,buffer,repl,bf,ismini,blocktype,commands,collapsedFiles,m,dest,minified,ext);
+						buffer=inject(replacetype,aggrtype,buffer,repl,bf,ismini,blocktype,commands,collapsedFiles,m,dest,minified,ext,preprocess);
 					
 					   }
 					 
@@ -339,6 +345,35 @@ return false;
 }
 	
 }
+
+
+
+function getObject(a){
+if (a){
+	
+a=a.trim();var o={};
+if (a.length==0) return o;
+var result;
+while((result=PARAM.exec(a)) !== null){	
+	var k=result[1];
+	var v;
+	if (result[3]) v=result[3]=='true';
+	else if (result[4]) v=parseFloat(result[4]);
+	else v=result[7];
+	o[k]=v;
+    					
+}	
+return o;	
+} else return null;	
+	
+}
+ var parametersToString=function(p){
+		 var s="";
+		
+		 for(var i in p) s+=i+":"+p[i]+' ';	
+		 return s;	
+		};
+
 function parseText(filepath,replacements,commands,ld){
  var text = grunt.file.read(filepath);
  var ext=getFileType(filepath); 
@@ -392,6 +427,9 @@ function parseText(filepath,replacements,commands,ld){
 			var filter=match[22];
 			var op=match[11];
 			var nodependencies=match[23]!=null;
+			
+			var preprocess=getObject(match[26]);
+			if (dep.defaults &&dep.defaults.preprocessor) preprocess=extend(dep.defaults.preprocessor,preprocess);
 			var norepeat=match[24]!=null;
 			var modules=[];
 			var smains=[];
@@ -403,7 +441,7 @@ function parseText(filepath,replacements,commands,ld){
 					
 				});
 			}
-			grunt.log.write('\t\t-Injecting dependency \''+depname+(modules.length>0?("' ("+(modules.join())+")"):"")+((op==null)?':':(' filtered by '+op+' \''+filter+"':")));
+			grunt.log.write('\t\t-Injecting dependency \''+depname+(modules.length>0?("' ("+(modules.join())+")"):"")+((op==null)?'':(' filtered by '+op+' \''+filter+"'"))+(preprocess?' with preprocessor ('+parametersToString(preprocess)+')':'')+':');
 			if (dep==undefined) {
 				if (adeps.get(depname)==undefined){
 				var error = new Error("Cannot find where you keep your Bower dependecy '"+depname+"'");
@@ -491,7 +529,7 @@ function parseText(filepath,replacements,commands,ld){
 					var bf= removeExtension(getFileName(m));  
 					if (!options.shortLinks) bf=depname+"."+bf;   
 				   
-				  buffer=inject(replacetype,aggrtype,buffer,repl,bf,ismini,blocktype,commands,collapsedFiles,m,dest,minified,ext);
+				  buffer=inject(replacetype,aggrtype,buffer,repl,bf,ismini,blocktype,commands,collapsedFiles,m,dest,minified,ext,preprocess);
 			  }
 
 
@@ -507,7 +545,7 @@ function parseText(filepath,replacements,commands,ld){
 					var bf= removeExtension(getFileName(m));  
 					if (!options.shortLinks) bf=depname+"."+bf;   
 				   
-				  buffer=inject(replacetype,aggrtype,buffer,repl,bf,ismini,blocktype,commands,collapsedFiles,m,dest,minified,ext);
+				  buffer=inject(replacetype,aggrtype,buffer,repl,bf,ismini,blocktype,commands,collapsedFiles,m,dest,minified,ext,preprocess);
 			  }
 
 
@@ -519,12 +557,12 @@ function parseText(filepath,replacements,commands,ld){
 		
         if (aggrtype==='aggregated'){ 
 		 if (replacetype==='linked'){ 
-	     commands.push({command:'collapse',sources:collapsedFiles,dest:dest+renderLinkFile(collapsedname,ismini,blocktype),minified:minified});
-		 buffer=getLinkReplacement(repl,collapsedname,ismini,blocktype);
+	     commands.push({command:'collapse',sources:collapsedFiles,dest:dest+renderLinkFile(collapsedname,ismini,blocktype,preprocess),minified:minified,preprocess:preprocess});
+		 buffer=getLinkReplacement(repl,collapsedname,ismini,blocktype,preprocess);
 		
 		 index++;
         } else if (replacetype==='inline') { 
-			 
+		 if (preprocess) buffer=preprocessor(buffer,preprocess);
 		 if (ismini) buffer=options.minifyHandlers[blocktype](buffer,minified!='minified');
 		
 		 if (ext!=blocktype) buffer=getSourceReplacement(repl,buffer);
@@ -578,31 +616,28 @@ var myMkdirSync = function(dir){
 
 function save(s,t,binary){ 
 	if (binary){
-		s=getAbsolutePath(s);
 		t=getAbsolutePath(t);
 		if (!$.fs.existsSync(t)) { 
 		   myMkdirSync($.path.dirname(t));
 
-           $.fs.writeFileSync(t, $.fs.readFileSync(s));
+           $.fs.writeFileSync(t, s);
 	    
           return true;
 		} else return false;
 		
 		
 	} else { 
-	    s=getAbsolutePath(s);
+
 		try {
-		
-		var m=grunt.file.read(s);
-		
-		if ((md5(m))!=md5(t)) { 
+		if (!$.fs.existsSync(t) || md5(s)!=md5($.fs.readFileSync(t))) { 
 		 myMkdirSync($.path.dirname(t));
-		 grunt.file.write(s,t);
+		 $.fs.writeFileSync(t, s);
 		return true;
 		} 
 		return false;
 	   }catch(e){
-		   grunt.file.write(s,t);
+		   console.log(e);
+		   $.fs.writeFileSync(t, s);
 	   return true;
 	   }
 }
@@ -651,18 +686,53 @@ var re = new RegExp('^\\s*(?:' + m.join('|') + ')\\s*', '');
 return src.replace(re, '');
 }
 
+function sortObject(o){
+var o1={};
+var keys=Object.keys(o).sort();
+keys.forEach(function(e){
+o1[e]=o[e];	
+});
+return o1;
+}
+
+function getUniqueDest(t,p){
+	var id=md5(parametersToString(sortObject(p)));
+	var u=uniquePreprocessedFiles[t];
+	var index;
+    if (u) {
+		var pos=u.indexOf(id);
+		if (pos<0) { pos=u.length;u.push(id);}
+		index=pos;
+	} else { 
+		uniquePreprocessedFiles[t]=[id];
+        index=0
+    }	
+	var ext=$.path.extname(t);
+	return t.substring(0,t.length-ext.length)+'_'+index+ext;
+}
+
+
+
 function executeCommand(c){
 	
 switch(c.command){
 case "cp"	: {
 var source;
 if (c.minified!==undefined &&c.minified) {
-	
-source=options.minifyHandlers[getFileType(c.source)](c.source,c.minified!=='minified');
-if (save(c.dest, source)) grunt.log.writeln('\t-' + c.dest + ' saved');
+source= $.fs.readFileSync(c.source);
+if (c.preprocess) {
+ 	source=preprocessor(source,c.preprocess);
+}
+source=options.minifyHandlers[getFileType(c.source)](source,c.minified!=='minified');
+if (save( source,c.dest)) grunt.log.writeln('\t-' + c.dest + ' saved');
 else grunt.log.writeln('\t-' + c.dest + ' unchanged');
 } else {
-	if (save(c.source, c.dest,true)) grunt.log.writeln('\t-' + c.dest + ' saved');
+
+	source= $.fs.readFileSync(c.source);
+	if (c.preprocess) {
+ 	source=preprocessor(source,c.preprocess);
+	}
+	if (save(source,c.dest,c.binary)) grunt.log.writeln('\t-' + c.dest + ' saved');
 	else grunt.log.writeln('\t-' + c.dest + ' unchanged');	
 }
 break;
@@ -672,14 +742,17 @@ source='';
 var isugly=c.minified!=='minified';
 if (c.minified!==undefined) {
 c.sources.forEach(function(s){
-source+=options.minifyHandlers[getFileType(s)](s,isugly);
+source=$.fs.readFileSync(s);
+if (c.preprocess) source=preprocessor(source,c.preprocess);
+source+=options.minifyHandlers[getFileType(s)](source,isugly);
 });
 } else {
 c.sources.forEach(function(s){
 source+=getContent(s);	
 });
+if (c.preprocess) source=preprocessor(source,c.preprocess);
 }
-if (save(c.dest, source)) grunt.log.writeln('\t-' + c.dest + ' saved');
+if (save( source,c.dest)) grunt.log.writeln('\t-' + c.dest + ' saved');
 else grunt.log.writeln('\t-' + c.dest + ' unchanged');	
 break;
 }
@@ -703,6 +776,13 @@ return m1.mtime>m2.mtime;
 	
 	return true;
 }
+}
+
+function preprocessor(source,context){
+	
+var pp = new $.preprocessor(source, ".");
+return pp.process(context);	
+	
 }
 
 function processFiles(files,target,commands,ld){
@@ -737,7 +817,7 @@ var dest=filemap.dest;
 grunt.log.writeln('* Processing ' + filepath+":");
 var content=(!options.skipNoUpdates || compareUpdateTime(filepath,dest))?parseText(filepath,replacements,commands,ld):null;
 
-if (content!=null && save(dest, content)) 
+if (content!=null && save(content,dest)) 
 grunt.log.writeln("\t -Saving to "+dest);
 else grunt.log.writeln('\t -Saving is skipped:file '+dest+' is unchanged');
 
