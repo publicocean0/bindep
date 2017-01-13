@@ -1,5 +1,5 @@
 # Bindep
-> it is a grunt tool for binding bower or local dependencies to your source code.It can manage binary resources and text attachments (css,javascript,...).It permits to extends bower json for handling submodules. Bottom you can see a example:
+> it is a grunt tool for binding bower or local dependencies to your source code.It can manage binary resources and text attachments (css,javascript,...).It permits to extends bower json for handling submodules and preprocessing. Bottom you can see a example:
 ```js
   "resources": {
   "mp3":"mp3/*",
@@ -59,7 +59,7 @@ separated : it handles each dependency separately.
 In the following lines of this block you must insert all the top dependencies (one for every line) with this syntax:
 ```code
 
-<package_name><modules><search> <nodeps> <nounique>
+<package_name><modules><search> <nodeps> <nounique> <preprocess ( [<name>:<value>]* )>
 ```
 where modules is optional and has this syntax :
 ```code
@@ -88,6 +88,7 @@ where op comparator is :
 where 
 - nodeps is optional and force to not inject the dependencies 
 - nounique is optional and permits to repeat the same package in the template.
+- preprocess is optional and permits to preprocess the source files passing options
 
 The optional parameters search and nodeps might be used just if necessary , for example where a external bower  package contains different versions in the same package  or optional dependencies. 
 
