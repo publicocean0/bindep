@@ -245,5 +245,5 @@ Copyright (c) 2015 Lorenzetto Cristian. Licensed under the MIT license.
 ## To do
 There is no way for importing optional sub-module in a dependency. Unfortunatelly bower don't support extended syntax included in the round parenthesis like this plugin so for skipping the problem we can add a json new property like optionals:["<namedep/namesubmodule>",...]
 
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/publicocean0/grunt-resourcesbinder/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
 
