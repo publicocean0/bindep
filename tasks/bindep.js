@@ -4,7 +4,7 @@ module.exports = function(grunt) {
 // Internal lib.
 var PARAM=/([a-z0-9\-]+)\s*\:\s*((true|false)|(\d+(\.\d+)?)|("((?:\\.|[^"\\\\])*))")/igm;
 var BLOCK=/^@bind:*(\S*)\s+(inline|linked)\s+(separated|aggregated)\s*(\s+(uglified|minified)\s*)?$/i;
-var DEPBLOCK=/^\s*((#.*)?|(([a-zA-Z0-9_\-.]+)(\s*\(\s*(([a-zA-Z0-9_\-.]+)(\s*,\s*([a-zA-Z0-9_\-.]+))*)\s*\)\s*)?(\s*\[((=\~)|(!\~)|(==)|(!=)|(=\^)|(!\^)|(=\$)|(!\$)|(=\?)|(!\?))\s+"(.*)"\s*\])?(\s+nodeps)?(\s+nounique)?(\s+preprocess\s*\(\s*(([a-z0-9\-]+\s*\:\s*((true|false)|(\d+(\.\d+)?)|("((?:\\.|[^"\\\\])*)")))(\s+([a-z0-9\-]+\s*\:\s*(true|false)|(\d+(\.\d+)?)|("((?:\\.|[^"\\\\])*)")))*)?\s*\))?\s*))$/i;
+var DEPBLOCK=/^\s*((#.*)?|(([a-zA-Z0-9_\-.]+)(\s*\(\s*(([a-zA-Z0-9_\-.]+)(\s*,\s*([a-zA-Z0-9_\-.]+))*)?\s*\)\s*)?(\s*\[((=\~)|(!\~)|(==)|(!=)|(=\^)|(!\^)|(=\$)|(!\$)|(=\?)|(!\?))\s+"(.*)"\s*\])?(\s+nodeps)?(\s+nounique)?(\s+preprocess\s*\(\s*(([a-z0-9\-]+\s*\:\s*((true|false)|(\d+(\.\d+)?)|("((?:\\.|[^"\\\\])*)")))(\s+([a-z0-9\-]+\s*\:\s*(true|false)|(\d+(\.\d+)?)|("((?:\\.|[^"\\\\])*)")))*)?\s*\))?\s*))$/i;
 var md5 = require('md5-hex'); 
 var jsParser = require("uglify-js");
 var cssParser = require('uglifycss');
@@ -289,7 +289,7 @@ function getSuffix(e){
 	return e;
 }
 
-function processDeps(subdeps,smains,norepeat,ftypedeps,adeps,gdeps,blocktype,found,buffer,replacetype,aggrtype,repl,ismini,commands,collapsedFiles,dest,minified,ext){
+function processDeps(subdeps,smains,norepeat,ftypedeps,adeps,gdeps,blocktype,found,buffer,replacetype,aggrtype,repl,ismini,commands,collapsedFiles,dest,minified,ext,submodulesdef){
 	var attachmentsInjected=0;
 	for(var i=0;i<subdeps.length;i++){
 					  var name=subdeps[i].name;
@@ -309,6 +309,37 @@ function processDeps(subdeps,smains,norepeat,ftypedeps,adeps,gdeps,blocktype,fou
 					   
 					   var mains=depi.main;
 					   var preprocess=depi.defaults.preprocessor;
+					   	var modulesdeps={};
+					   	var cwd=depi.cwd;
+					   	var modules=submodulesdef[name]?submodulesdef[name]:(depi.defaults.modules || []);
+						modules.forEach(function(e){
+							var sm=depi.modules[e];
+							
+								if (sm==undefined) throw new Error("module type "+e+" not defined");
+								//console.log(JSON.stringify(sm));
+								if (sm.require) {
+									var notmatch=checkRequire(sm.require,modules);
+									if (notmatch)  throw new Error("module type "+e+" requires the module "+notmatch);
+								}
+								var resources=sm.resources;
+								sm.main.forEach(function(f1){
+									var f=cwd+'/'+f1; 
+									if (smains.indexOf(f)<0 &&$.path.extname(f)=='.'+blocktype) smains.push(f);
+								});
+								for (var k in resources){
+									r=options.resources[k];
+									rr=resources[k];
+									if (r==undefined) throw new Error("resource type "+e+'.'+k+" not defined");
+									rr.forEach(function(e1){
+											 res[cwd+'/'+e1]=getAbsolutePath(r.target)+(r.global?'':('/'+depname))+'/'+getSuffix(e1);
+									});
+								}
+								for (var k in sm.dependencies){
+								modulesdeps[k]=sm.dependencies[k];
+								}
+						});
+            
+					   
 					   for(j=0;j<mains.length;j++){
 					   var m=mains[j];  
 					   if (gdeps[blocktype][name].indexOf(m)>=0) continue;
@@ -427,20 +458,20 @@ function parseText(filepath,replacements,commands,ld){
 			var filter=match[22];
 			var op=match[11];
 			var nodependencies=match[23]!=null;
-			
+			var submodulesdef=dep.defaults.submodules || {};
 			var preprocess=getObject(match[26]);
 			if (dep.defaults &&dep.defaults.preprocessor) preprocess=extend(dep.defaults.preprocessor,preprocess);
 			var norepeat=match[24]!=null;
 			var modules=[];
 			var smains=[];
 			if (match[5]){
-			    var _modules=match[6].split(",");
+			    var _modules=match[6]?match[6].split(","):[];
 			    _modules.forEach(function(e){ 
 				    			
 					modules.push(e); 
 					
 				});
-			}
+			} else if (dep.defaults.modules) modules=dep.defaults.modules;
 			grunt.log.write('\t\t-Injecting dependency \''+depname+(modules.length>0?("' ("+(modules.join())+")"):"")+((op==null)?'':(' filtered by '+op+' \''+filter+"'"))+(preprocess?' with preprocessor ('+parametersToString(preprocess)+')':'')+':');
 			if (dep==undefined) {
 				if (adeps.get(depname)==undefined){
@@ -501,13 +532,13 @@ function parseText(filepath,replacements,commands,ld){
 		
             
 			if (!nodependencies){
-					var res1=processDeps(subdeps,smains,norepeat,ftypedeps,adeps,gdeps,blocktype,found,buffer,replacetype,aggrtype,repl,ismini,commands,collapsedFiles,dest,minified,ext);
+					var res1=processDeps(subdeps,smains,norepeat,ftypedeps,adeps,gdeps,blocktype,found,buffer,replacetype,aggrtype,repl,ismini,commands,collapsedFiles,dest,minified,ext,submodulesdef);
                     found=res1.found;
                     attachmentsInjected+=res1.attachmentsInjected;
                     buffer=res1.buffer;
                     var mdeps=[];
                    for(var k in modulesdeps) mdeps.push({name:k});
-                   res1=processDeps(mdeps,smains,norepeat,ftypedeps,adeps,gdeps,blocktype,found,buffer,replacetype,aggrtype,repl,ismini,commands,collapsedFiles,dest,minified,ext);
+                   res1=processDeps(mdeps,smains,norepeat,ftypedeps,adeps,gdeps,blocktype,found,buffer,replacetype,aggrtype,repl,ismini,commands,collapsedFiles,dest,minified,ext,submodulesdef);
                     found=res1.found;
                     attachmentsInjected+=res1.attachmentsInjected;
                     buffer=res1.buffer;

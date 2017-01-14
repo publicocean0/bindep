@@ -42,11 +42,30 @@ var gdeps=config.get('global-dependencies');
 $._.each(allDependencies, gatherInfo(false,config));
 $._.each(loc, gatherInfo(true,config));
 
+
 var keys=gdeps.keys();
 for(var e=0;e<keys.length;e++) {
 	var k=keys[e];
 	var d=gdeps.get(k);
 	var name=d.name;
+	var includes=d.defaults.submodules || {};
+	var incmods=d.defaults.modules||[];
+	incmods.forEach(function(e){
+	 if (d.modules[e]==undefined) throw new Error('component'+name+':the default module '+e+') is not found'); 	
+	});
+	for(var i in includes){
+		var mod=gdeps.get(i);
+		var inc=includes[i];
+		if ($._.isString(inc)) inc=[inc];
+		if (mod==undefined) throw new Error('component'+name+':the default submodule package '+i+' is not defined');
+		if (d.dependencies[i]==undefined) throw new Error('component'+name+':the default submodule package'+i+' is not a dependency');
+		if (inc instanceof Array) {
+		   inc.forEach(function(e){
+			if (mod.modules[e]==undefined)   throw new Error('component'+name+':the default submodule '+i+'/'+e+' is undefined'); 
+			   
+		   });
+		} else throw new Error('component'+name+':the default submodule package '+i+' is not a valid type');
+	}
 	if (k!==name){
 	console.log('Warning: the package '+k+' has a package name['+name+'] not correct in its bower.json!');
 	d.name=k;
