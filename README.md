@@ -39,6 +39,7 @@ Insert placeholders in your code where your dependencies will be injected:
 <head>
   <!-- @bind:css linked separated uglified 
        jquery
+       
 
   -->
 
@@ -46,7 +47,7 @@ Insert placeholders in your code where your dependencies will be injected:
 <body>
   <!-- @bind:js linked separated uglified 
        jquery
-
+       moment
   -->
 </body>
 </html>
@@ -151,6 +152,7 @@ Let `bind` work its magic:
 <body>
 
   <script src="/js/jquery.js"></script>
+  <script src="/js/moment.js"></script>
 
 </body>
 </html>
