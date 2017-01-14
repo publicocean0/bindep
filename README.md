@@ -150,10 +150,8 @@ Let `bind` work its magic:
 
 </head>
 <body>
-
   <script src="/js/jquery.js"></script>
   <script src="/js/moment.js"></script>
-
 </body>
 </html>
 ```
