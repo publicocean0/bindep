@@ -9,10 +9,11 @@ Bottom you can see a example about json properties used in bower extension :
   },
   "defaults":{
 "preprocessor":{"c":4},//default context for preprocessor(if you active it)
-"includes":{"filedetector":["image"]},	//submodules used 
+"submodules":{"filedetector":["image"]},	//submodules used in the dependencies
+"modules":['preview'] // default modules used in the current bower component
 },
   "modules":{
-   "linkPreviewInterceptor":{
+   "preview":{
    "main":["js/linkPreviewInterceptor.js"],
    "dependencies":{},
    "resources":{}
