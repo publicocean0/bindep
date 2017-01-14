@@ -1,6 +1,6 @@
 {
 "name": "bindep",
-"version": "1.0.21",
+"version": "1.0.22",
 "description": "Embed Bower dependencies to your source code.",
 "repository": "publicocean0/bindep",
 "author": {
