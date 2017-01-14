@@ -1,5 +1,7 @@
 # Bindep
-> it is a grunt tool for binding bower or local dependencies to your source code.It can manage binary resources and text attachments (css,javascript,...).It permits to extends bower json for handling resources, submodules and preprocessing. Bottom you can see a example:
+> it is a grunt tool for binding bower or local dependencies to your source code.It can manage binary resources and text attachments (css,javascript,...).It permits to extends bower json for handling resources, submodules and preprocessing.
+You can setup the templates for replacing, target folders, local dependencies and other in the gruntfile.
+Bottom you can see a example:
 ```js
   "resources": {
   "mp3":"mp3/*",
