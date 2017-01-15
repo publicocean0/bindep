@@ -19,7 +19,7 @@ It introduces few little concepts for its working:
  6. dependency: a bower component can use many bower component as dependencies. 
  7. module: a bower component can contains many modules. For each module you can add attachments,resources,dependencies.You can also define what modules require this module. 
  8. converter: is a handler permitting to convert a file type in a attachment. 
- 9. preprocessor: bindep can use a additional preprocessor for attachments passing directly options in your tag-block.
+ 9. preprocessor: bindep can use a additional preprocessor for attachments passing directly options in your tag-block.The preprocessor syntax you can embed in you attachments can be find [here](https://github.com/dcodeIO/Preprocessor.js) 
  10. defaults:you can set the default behavior for preprocessor (context passed),modules used,submodules used in the dependencies actived. 
     </ul>
 Bindep is used normaly by web developers and the default setting handles css,js,less as attachmnents.You can modify it or extend it for supporting other attachments-type,behaviours,target folder,... You can set your converter for example for sass files.   
