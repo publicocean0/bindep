@@ -1,5 +1,5 @@
 # Bindep
-> It is a grunt tool for binding bower or local dependencies to your source code.
+It is a grunt tool for binding bower or local dependencies to your source code.
 It introduces few little concepts for its working:
    <ul>
  1. tag-block: is a special block you can insert in source code permitting to define how to add the bower components. 
@@ -46,7 +46,7 @@ it is born (original name was grunt-resourcesbinder) for my needs using a high m
 
 
 ## Getting Started
->Install the module with [npm](https://npmjs.org): 
+Install the module with [npm](https://npmjs.org): 
 ```bash
 $ npm install --save bindep
 ```
@@ -60,19 +60,18 @@ Insert placeholders in your code where your dependencies will be injected:
 <head>
   <!-- @bind:css linked separated uglified 
        jquery
-       
-
-  --&less;
-
+  --> 
 </head>
 <body>
   <!-- @bind:js linked separated uglified 
        jquery
        moment
-  --&less;
+       
+  -->
 </body>
 </html>
 ```
+
 The complete syntax is 
 ```code
 @bind:[<filetype>] <linked|inline>  <aggregated|separated>  [minified|uglified]
