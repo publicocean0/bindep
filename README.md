@@ -142,7 +142,7 @@ css:minifyCSS
 },
 development:false,// if true the block will be forced to bindind in mapped way , disabling also the minification.
 exclude:[],  
-templates:{target:'target/',sources:[]},
+templates:[{target:'target/'+project+'/WEB-INF/ftl/',sources:['src/main/ftl/**/*.ftl']},{target:'target/'+project+'/WEB-INF/js/',sources:['src/main/js/templates/**/*.js'],linksOnDebug:false}],
 attachments:{
 js: {replacement:{link:'<script src="/js/{{file}}"></script>',inline:'<script>{{source}}</script>'},target:'js/'},
 css:{replacement:{link:'<link rel="stylesheet" href="/css/{{file}}" />',inline:'<style><{{source}}</style>'},target:'css/'}
