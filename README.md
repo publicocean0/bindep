@@ -3,10 +3,11 @@
 It introduces few little concepts for its working:
  - tag-block: is a special block you can insert in source code permitting to define how to add the bower components. 
  - source file: it is a text file where you can put inside particolar tags for preprocessing.
- - attachment: it is a file present in a bower component can be associated to the source code. Every bower component can contains a main attachment for each file type. Attachments can be associated to the source in 2 different way: 
+ - attachment: it is a file present in a bower component can be associated to the source code. Every bower component can contains a main attachment for each file type. 
+Attachments can be associated to the source in 2 different way: 
        - inline: attachment is injected in the source with a configurable way
        - linked: attachment is saved in a target dir and a link is injected in source code in a configurable way.
-       You can specify other 2 sub way :
+  You can specify other 2 sub way :
        - aggregated: all attachmnts are processed after the aggregation
        - separated:  all attachments are procesed one-b-one.
  - minimizer:a attachment can be minified/uglified.
