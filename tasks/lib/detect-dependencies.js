@@ -35,7 +35,7 @@ if (allDependencies[n]!==undefined) throw new Error('the package name '+n+' in l
    loc[n]=lo[l].version || 'local';
 }
 
-
+ 
 
 var gdeps=config.get('global-dependencies');
 

@@ -8,7 +8,47 @@ var DEPBLOCK=/^\s*((#.*)?|(([a-zA-Z0-9_\-.]+)(\s*\(\s*(([a-zA-Z0-9_\-.]+)(\s*,\s
 var md5 = require('md5-hex'); 
 var jsParser = require("uglify-js");
 var cssParser = require('uglifycss');
-grunt.registerMultiTask('bindep', 'embedding files', function() {
+var less =require("less");
+less.logger.addListener({
+    debug: console.log,
+    info: console.log,
+    warn: console.log,
+    error: console.log
+});
+var $ = {
+bowerConfig: require('bower-config'),
+ _: require('lodash'),
+fs: require('fs'),
+path: require('path'),
+glob:require('glob'),
+preprocessor:require('preprocessor')
+};
+var lessExecute =function(f,source){
+	
+	var s=source instanceof Buffer?source.toString('utf-8'):source;
+	
+	var compiled=null;
+
+   less.render(s,{
+    processImports: true,
+    syncImport :true,
+    sync : true,
+    paths: [$.path.dirname(f)],
+    fileInfo:{filename:$.path.basename(f)}
+	}, function(e,o) { 
+		 
+		    if (e) throw new Error('error parsing file '+f+':'+e.message);
+            compiled = o.css;
+            return compiled;
+        });
+
+   
+
+  
+	return compiled;
+}
+
+grunt.registerMultiTask('bindep', 'embedding files', function () {
 // Merge task-specific and/or target-specific options with these defaults.
 
 var options =extend({
@@ -18,6 +58,8 @@ skipNoUpdates:false,
 shortLinks:true,
 packageHandler:undefined,
 localDependencies:{},
+converters:{
+less:{	execute:lessExecute,type:'css'}},
 minifyHandlers:{
 js:minifyJS,
 css:minifyCSS
@@ -26,21 +68,15 @@ css:minifyCSS
 exclude:[],  
 templates:[{target:'target/',sources:[]}],
 attachments:{
-js: {replacement:{link:'<script src="/js/{{file}}"></script>',inline:'<script>{{source}}</script>'},target:'js/'},
-css:{replacement:{link:'<link rel="stylesheet" href="/css/{{file}}" />',inline:'<style><{{source}}<stype>'},target:'css/'}
+js: {toType:'js',replacement:{link:'<script src="/js/{{file}}"></script>',inline:'<script>{{source}}</script>'},target:'js/'},
+css:{toType:'css',replacement:{link:'<link rel="stylesheet" href="/css/{{file}}" />',inline:'<style><{{source}}<stype>'},target:'css/'},
 },
 resources:{}
 
 },this.data);
 options.development=true;
-var $ = {
-bowerConfig: require('bower-config'),
- _: require('lodash'),
-fs: require('fs'),
-path: require('path'),
-glob:require('glob'),
-preprocessor:require('preprocessor')
-};
+
+
 var currentDir=process.cwd()+'/';
 var cwd = options.cwd ? $.path.resolve(options.cwd)+'/' : currentDir;
 for(var k=0;k<options.localDependencies.length;k++){
@@ -80,6 +116,19 @@ var uniquePreprocessedFiles={};
 var helpers = require('./lib/helpers');
 var config = module.exports.config = helpers.createStore();
 
+var reverseConverters={};
+(function(){
+ var c=options.converters,a=Object.keys(options.attachments);
+ a.forEach(function(e){
+	 reverseConverters[e]=[];
+ });
+ for(var k in c) {
+	 var t=c[k].type;
+	 if (a.indexOf(t)<0) continue;
+	 reverseConverters[t].push(k);
+ }	
+})();
+
 
 config.set
 ('bower.json', options.bowerJson || JSON.parse($.fs.readFileSync($.path.join(cwd, './bower.json'))))
@@ -87,7 +136,7 @@ config.set
 ('cwd', cwd)
 ('package-handler',options.packageHandler)
 ('dev-dependencies', options.development||false)
-('detectable-file-types', Object.keys(options.attachments))
+('detectable-file-types', Object.keys(options.attachments).concat(Object.keys(options.converters)))
 ('exclude', Array.isArray(options.exclude) ? options.exclude : [ options.exclude ])
 ('global-dependencies', helpers.createStore())
 ('resources',helpers.createStore())
@@ -307,7 +356,7 @@ function processDeps(subdeps,smains,norepeat,ftypedeps,adeps,gdeps,blocktype,fou
 					  if (gdeps[blocktype][name]==undefined) gdeps[blocktype][name]=[]; 
 					   
 					   
-					   var mains=depi.main;
+					   var mains=depi.main.concat(convertedMains(blocktype,name));
 					   var preprocess=depi.defaults.preprocessor;
 					   	var modulesdeps={};
 					   	var cwd=depi.cwd;
@@ -404,7 +453,14 @@ return o;
 		 for(var i in p) s+=i+":"+p[i]+' ';	
 		 return s;	
 		};
+var convertedMains=function(type,name){
+				  var a=[];
+				  reverseConverters[type].forEach(function(e){
+					a=a.concat(config.get('global-dependencies-sorted')[e][name].main);
+				  });
+				  return a;
 
+};
 function parseText(filepath,replacements,commands,ld){
  var text = grunt.file.read(filepath);
  var ext=getFileType(filepath); 
@@ -415,6 +471,7 @@ function parseText(filepath,replacements,commands,ld){
  var newtext=processBlock(text,ld, function(blocktype,replacetype,aggrtype,minified,files,offset)
     {   
 		blocktype=blocktype.toLowerCase();
+		
 		if (gdeps[blocktype]==undefined) gdeps[blocktype]={};
 		grunt.log.writeln('\t-Detecting block type '+blocktype+' at offset '+offset+" ["+replacetype+","+aggrtype+((minified!=undefined)?", "+minified:'')+"]");
 		if (config.get('detectable-file-types').indexOf(blocktype)==-1){
@@ -544,7 +601,9 @@ function parseText(filepath,replacements,commands,ld){
                     buffer=res1.buffer;
               
              }
-			  var mains=filterMains(dep.main,op,filter);
+			  
+			  var mains=filterMains(dep.main.concat(convertedMains(blocktype,depname)),op,filter);
+			 
 			  for(i=0;i<mains.length;i++){
 				  var m=mains[i]; 
 				  var rind=smains.indexOf(m);
@@ -749,21 +808,22 @@ function executeCommand(c){
 switch(c.command){
 case "cp"	: {
 var source;
-if (c.minified!==undefined &&c.minified) {
+var type=getFileType(c.source);
 source= $.fs.readFileSync(c.source);
+var converter=options.converters[type];
+if (converter) source=converter.execute(c.source,source);
+if (c.minified!==undefined &&c.minified) {
 if (c.preprocess) {
  	source=preprocessor(source,c.preprocess);
 }
 source=options.minifyHandlers[getFileType(c.source)](source,c.minified!=='minified');
-if (save( source,c.dest)) grunt.log.writeln('\t-' + c.dest + ' saved');
+if (save( source,c.dest)) grunt.log.writeln('\t-' + c.dest + ((converter)?' converted and saved':' saved'));
 else grunt.log.writeln('\t-' + c.dest + ' unchanged');
 } else {
-
-	source= $.fs.readFileSync(c.source);
 	if (c.preprocess) {
  	source=preprocessor(source,c.preprocess);
 	}
-	if (save(source,c.dest,c.binary)) grunt.log.writeln('\t-' + c.dest + ' saved');
+	if (save(source,c.dest,c.binary)) grunt.log.writeln('\t-' + c.dest + ((converter)?' converted and saved':' saved'));
 	else grunt.log.writeln('\t-' + c.dest + ' unchanged');	
 }
 break;
@@ -773,15 +833,21 @@ source='';
 var isugly=c.minified!=='minified';
 if (c.minified!==undefined) {
 c.sources.forEach(function(s){
+var type=getFileType(s);
 source=$.fs.readFileSync(s);
 if (c.preprocess) source=preprocessor(source,c.preprocess);
-source+=options.minifyHandlers[getFileType(s)](source,isugly);
+var converter=options.converters[type];
+if (converter) source=converter.execute(c.source,source);
+source+=options.minifyHandlers[type](source,isugly);
 });
 } else {
 c.sources.forEach(function(s){
-source+=getContent(s);	
+var converter=options.converters[type],cc=getContent(s);
+if (c.preprocess) cc=preprocessor(cc,c.preprocess);
+if (converter) cc=converter.execute(s,cc);
+source+=cc;	
 });
-if (c.preprocess) source=preprocessor(source,c.preprocess);
+
 }
 if (save( source,c.dest)) grunt.log.writeln('\t-' + c.dest + ' saved');
 else grunt.log.writeln('\t-' + c.dest + ' unchanged');	
@@ -876,6 +942,7 @@ if (options.templates instanceof Array){
 	processFiles(options.templates.sources,options.templates.target,commands,ld);
 }
 commands=purgeCommands(commands);
+
 //grunt.log.writeln(JSON.stringify(commands));
 if (commands.length>0)grunt.log.writeln('* Saving files ...');
 commands.forEach(function(c){
