@@ -62,14 +62,14 @@ Insert placeholders in your code where your dependencies will be injected:
        jquery
        
 
-  -->
+  --&less;
 
 </head>
 <body>
   <!-- @bind:js linked separated uglified 
        jquery
        moment
-  -->
+  --&less;
 </body>
 </html>
 ```
