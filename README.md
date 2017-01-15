@@ -231,29 +231,56 @@ using this Gruntfile.js example:
 ```js
 module.exports = function(grunt) {
 var project=(grunt.option( "project" )==undefined)?'':grunt.option( "project" );
+
 grunt.initConfig({
 // Before generating any new files, remove any previously-created files.
 
 bindep: {
 default_options: {
-templates:{target:'target/'+project+'/WEB-INF/ftl/',sources:['src/main/ftl/**/*.ftl']},
+localDependencies:[{
+	name:"fileutils",
+	main:"src/main/js/fileUtils.js"
+    },
+    {
+    name:"layout",
+    main:"src/main/css/layout.css"
+    }
+       
+],
+packageHandler:function(n,mains,deps){// fix qtip2 error
+if (n=='qtip2') {
+
+	mains.push('jquery.qtip.css');
+}else if (n=='typeahead.js') {
+
+	mains.push('bloodhound.js');
+}
+
+},// {target:'target/'+project+'/WEB-INF/ftl/',sources:['src/main/ftl/**/*.ftl']},
+templates:[{target:'target/'+project+'/WEB-INF/ftl/',sources:['src/main/ftl/**/*.ftl']},{target:'target/'+project+'/WEB-INF/js/',sources:['src/main/js/templates/**/*.js'],linksOnDebug:false}],
 development:grunt.option( "dev" )!==undefined,
+shortLinks:true,
+
 attachments:{
 js: {replacement:{link:'<script src="<@utils.url\'/js/{{file}}\'/>"></script>',inline:'<script>{{source}}</script>'},target:'target/'+project+'/WEB-INF/js/'},
-css:{replacement:{link:'<link rel="stylesheet" href="<@utils.url\'/css/{{file}}\'/>" rel="stylesheet" media="screen" />',inline:'<style><{{source}}</style>'},target:'target/'+project+'/WEB-INF/css/'}
+css:{replacement:{link:'<link rel="stylesheet" href="<@utils.url\'/css/{{file}}\'/>"  media="screen" />',inline:'<style>{{source}}</style>'},target:'target/'+project+'/WEB-INF/css/'}
 },
-resources:{img:{target:"img/",global:false}
+resources:{
+mp3:{target:'target/'+project+'/WEB-INF/mp3/'},
+img:{target:'target/'+project+'/WEB-INF/img/'},
+font:{target:'target/'+project+'/WEB-INF/fonts/'}
 }
 
-
-
+}
 }
 });
+
 	grunt.loadNpmTasks('bindep');
 	// Default task(s).
 	grunt.registerTask('default', ['bindep' ]);
 
 };
+
 ```
 
 ## Contributing
