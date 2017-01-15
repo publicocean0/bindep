@@ -16,7 +16,7 @@ Attachments can be associated to the source in 2 different way:
  - module: a bower component can contains many modules. For each module you can add attachments,resources,dependencies.You can also define what modules require this module. 
  - converter: is a handler permitting to convert a file type in a attachment. 
  - preprocessor: bindep can use a additional preprocessor for attachments passing directly options in your tag-block.
-
+ - defaults:you can set the default behavior for preprocessor (context passed),modules used,submodules used in the dependencies actived. 
 Bindep is used normaly by web developers and the default setting handles css,js,less as attachmnents.You can modify it or extend it for supporting other attachments-type,behaviours,target folder,... You can set your converter for example for sass files.   
 it is born (original name was grunt-resourcesbinder) for my needs using a high modularity level in my projects.Bindep for working extends the bower json definition with other properties.Bottom you can see a example :
 ```js
