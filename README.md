@@ -8,8 +8,8 @@ Attachments can be associated to the source in 2 different way:
        - inline: attachment is injected in the source with a configurable way
        - linked: attachment is saved in a target dir and a link is injected in source code in a configurable way.
   You can specify other 2 sub way :
-       1.aggregated: all attachmnts are processed after the aggregation
-       2.separated:  all attachments are procesed one-b-one.
+       1. aggregated: all attachmnts are processed after the aggregation
+       2. separated:  all attachments are procesed one-b-one.
  - minimizer:a attachment can be minified/uglified.
  - resource: is a text or a binary file present in a bower component but has no direct reference in the source.
  - dependency: a bower component can use many bower component as dependencies. 
