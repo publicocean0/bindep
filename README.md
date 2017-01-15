@@ -1,7 +1,21 @@
 # Bindep
-> it is a grunt tool for binding bower or local dependencies to your source code.It can manage binary resources and text attachments (css,javascript,...).It permits to extends bower json for handling resources, submodules and preprocessing.
-You can setup the templates for replacing, target folders, local dependencies and other in the gruntfile.
-Bottom you can see a example about json properties used in bower extension :
+> It is a grunt tool for binding bower or local dependencies to your source code.
+It introduces few little concepts for its working:
+ - tag-block: is a special block you can insert in source code permitting to define how to add the bower components. 
+ - source file: it is a text file where you can put inside particolar tags for preprocessing.
+ - attachment: it is a file present in a bower component can be associated to the source code. Every bower component can contains a main attachment for each file type. Attachments can be associated to the source in 2 different way: 
+       - inline: attachment is injected in the source with a configurable way
+       - linked: attachment is saved in a target dir and a link is injected in source code in a configurable way. 
+       - aggregated: all attachmnts in the same tag-block are collected and injected.
+       - separated:  all ttachments in the same ta-block are collected and saved in a separated file and linked.
+ - resource: is a text or a binary file present in a bower component but has no direct reference in the source.
+ - dependency: a bower component can use many bower component as dependencies. 
+ - module: a bower component can contains many modules. For each module you can add attachments,resources,dependencies.You can also define what modules require this module. 
+ - converter: is a handler permitting to convert a file type in a attachment. 
+ - preprocessor: bindep can use a additional preprocessor for attachments passing directly options in your tag-block.
+
+Bindep is used normaly by web developers and the default setting handles css,js,less as attachmnents.You can modify it or extend it for supporting other attachments-type,behaviours,target folder,... You can set your converter for example for sass files.   
+it is born (original name was grunt-resourcesbinder) for my needs using a high modularity level in my projects.Bindep for working extends the bower json definition with other properties.Bottom you can see a example :
 ```js
   "resources": {
   "mp3":"mp3/*",
