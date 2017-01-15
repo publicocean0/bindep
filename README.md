@@ -3,7 +3,7 @@ It is a grunt tool for binding bower or local dependencies to your source code.
 It introduces few little concepts for its working:
    <ul>
  1. tag-block: is a special block you can insert in source code permitting to define how to add the bower components. 
- 2. template file: it is a text file where you can put inside particolar tags for preprocessing.You have to set in your templates option the file extension for every template type.
+ 2. template file: it is a text file where you can put inside tag-blocks for preprocessing.You have to set in your templates option the file extension for every template type.
  3. attachment: it is a file present in a bower component can be associated to the source code. Every bower component can contains a main attachment for each file type. Attachments can be associated to the source in 2 different way:
     <ul>
   <li> inline: attachment is injected in the source with a configurable way</li>
