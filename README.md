@@ -1,5 +1,5 @@
 # Bindep
-> It is a grunt tool for binding bower or local dependencies to your source code.
+It is a grunt tool for binding bower or local dependencies to your source code.
 It introduces few little concepts for its working:
    <ul>
  1. tag-block: is a special block you can insert in source code permitting to define how to add the bower components. 
@@ -12,7 +12,7 @@ It introduces few little concepts for its working:
  You can specify other 2 sub way :
    <ul>
   <li> aggregated: all attachmnts are processed after the aggregation</li>
-  <li>separated:  all attachments are procesed one-b-one.</li>
+  <li>separated:  all attachments are procesed one-by-one.</li>
    </ul>
    In development mode they are linked separated.
  4. minimizer:a attachment can be minified/uglified.In development mode is disabled.
@@ -47,37 +47,31 @@ it is born (original name was grunt-resourcesbinder) for my needs using a high m
 
 ## Getting Started
 Install the module with [npm](https://npmjs.org): 
-
 ```bash
 $ npm install --save bindep
 ```
-
 Install your [bower](http://bower.io) dependencies (if you haven't already):
-
 ```bash
 $ bower install --save jquery
 ```
-
 Insert placeholders in your code where your dependencies will be injected:
-
 ```html
 <html>
 <head>
   <!-- @bind:css linked separated uglified 
        jquery
-       
-
-  -->
-
+  --> 
 </head>
 <body>
   <!-- @bind:js linked separated uglified 
        jquery
        moment
+       
   -->
 </body>
 </html>
 ```
+
 The complete syntax is 
 ```code
 @bind:[<filetype>] <linked|inline>  <aggregated|separated>  [minified|uglified]
@@ -100,7 +94,6 @@ where search is optional and has this syntax :
 ```code
 <[<op> "<[filter]>" ]>
 ```
-
 where op comparator is :
 
 ```code
@@ -125,8 +118,6 @@ The optional parameters search and nodeps might be used just if necessary , for 
 
 The sub dependencies of the package are automatically injected if 'nodeps' parameter is set.
 The filter is optional and permits to filter the resources of that package.
-
-
 Set the the right options for your project :
 ```js
 development : it adds dev-dependencies , forces the setting of  every block as 'linked  separated'
@@ -163,7 +154,6 @@ resources:{
 
 }
 ```
-
 Let `bind` work its magic:
 
 
