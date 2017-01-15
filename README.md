@@ -291,7 +291,7 @@ This package is used personally, but it might be extended with new features.
 Copyright (c) 2015 Lorenzetto Cristian. Licensed under the MIT license.
 
 ## To do
-Not all features implemented are tested so much. I will test them in the time using them in the real projects.Anyway i used the basic features in many projects for long time.Custom preprocessing is a feature not yet tested in projects or bower dependencies with submodules. 
+Not all features implemented are tested so much. I will test them in the time using them in the real projects.Anyway i used the basic features in many projects for long time.Custom preprocessing is a feature not yet tested in projects or bower dependencies (>= 2 level) with submodules. 
 
 
 
