@@ -46,20 +46,15 @@ it is born (original name was grunt-resourcesbinder) for my needs using a high m
 
 
 ## Getting Started
-Install the module with [npm](https://npmjs.org): 
-
+>Install the module with [npm](https://npmjs.org): 
 ```bash
 $ npm install --save bindep
 ```
-
 Install your [bower](http://bower.io) dependencies (if you haven't already):
-
 ```bash
 $ bower install --save jquery
 ```
-
 Insert placeholders in your code where your dependencies will be injected:
-
 ```html
 <html>
 <head>
@@ -100,7 +95,6 @@ where search is optional and has this syntax :
 ```code
 <[<op> "<[filter]>" ]>
 ```
-
 where op comparator is :
 
 ```code
@@ -125,8 +119,6 @@ The optional parameters search and nodeps might be used just if necessary , for 
 
 The sub dependencies of the package are automatically injected if 'nodeps' parameter is set.
 The filter is optional and permits to filter the resources of that package.
-
-
 Set the the right options for your project :
 ```js
 development : it adds dev-dependencies , forces the setting of  every block as 'linked  separated'
@@ -163,7 +155,6 @@ resources:{
 
 }
 ```
-
 Let `bind` work its magic:
 
 
