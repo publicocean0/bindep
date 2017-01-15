@@ -5,8 +5,8 @@ It introduces few little concepts for its working:
  - source file: it is a text file where you can put inside particolar tags for preprocessing.
  - attachment: it is a file present in a bower component can be associated to the source code. Every bower component can contains a main attachment for each file type. 
 Attachments can be associated to the source in 2 different way: 
-       - inline: attachment is injected in the source with a configurable way
-       - linked: attachment is saved in a target dir and a link is injected in source code in a configurable way.
+       1. inline: attachment is injected in the source with a configurable way
+       2. linked: attachment is saved in a target dir and a link is injected in source code in a configurable way.
   You can specify other 2 sub way :
        1. aggregated: all attachmnts are processed after the aggregation
        2. separated:  all attachments are procesed one-b-one.
