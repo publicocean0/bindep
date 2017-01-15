@@ -12,7 +12,7 @@ It introduces few little concepts for its working:
  You can specify other 2 sub way :
    <ul>
   <li> aggregated: all attachmnts are processed after the aggregation</li>
-  <li>separated:  all attachments are procesed one-b-one.</li>
+  <li>separated:  all attachments are procesed one-by-one.</li>
    </ul>
    In development mode they are linked separated.
  4. minimizer:a attachment can be minified/uglified.In development mode is disabled.
