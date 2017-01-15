@@ -79,7 +79,7 @@ Insert placeholders in your code where your dependencies will be injected:
 ```
 The complete syntax is 
 ```code
-@binder:[<filetype>] <linked|inline>  <aggregated|separated>  [minified|uglified]
+@bind:[<filetype>] <linked|inline>  <aggregated|separated>  [minified|uglified]
 ```
 The options mean:
 linked: it replace the link if the corrispondent dependency using the link replacement,
