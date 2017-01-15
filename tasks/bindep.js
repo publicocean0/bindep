@@ -74,7 +74,8 @@ css:{toType:'css',replacement:{link:'<link rel="stylesheet" href="/css/{{file}}"
 resources:{}
 
 },this.data);
-options.development=true;
+
+//options.development=true;
 
 
 var currentDir=process.cwd()+'/';
@@ -510,7 +511,8 @@ function parseText(filepath,replacements,commands,ld){
             if (match[2]!=null) continue;
             var depname=match[4];
 			var dep=ftypedeps[depname];
-			var resources=dep.resources;
+			if (dep==undefined) 	throw new Error('unable to find component  '+depname+"'"); 
+			var resources=dep.resources||{};
 			var cwd=dep.cwd;
 			var filter=match[22];
 			var op=match[11];
