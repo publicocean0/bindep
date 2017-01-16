@@ -192,55 +192,8 @@ Let `bind` work its magic:
 
 ### [Grunt](http://gruntjs.com)
 
-See [`bindep`](https://github.com/publicocean0/bindep).
-
-
-
-
-## Bower Overrides
-To override a property, or lack of, in one of your dependency's `bower.json` file, you may specify an `overrides` object in your own `bower.json`.
-
-## Maven
-You can integrate this plugin with maven using [frontend-maven-plugin](https://github.com/eirslett/frontend-maven-plugin). A example of configuration is :
-```xml
-		<plugin>
-						<groupId>com.github.eirslett</groupId>
-						<artifactId>frontend-maven-plugin</artifactId>
-						<version>0.0.23</version>
-						<executions>
-							<execution>
-								<id>npm install</id>
-								<goals>
-									<goal>npm</goal>
-								</goals>
-								<configuration>
-									<arguments>install</arguments>
-								</configuration>
-							</execution>
-							<execution>
-								<id>bower install</id>
-								<goals>
-									<goal>bower</goal>
-								</goals>
-								<configuration>
-									<arguments>install</arguments>
-								</configuration>
-							</execution>
-							<execution>
-								<id>grunt build</id>
-								<goals>
-									<goal>grunt</goal>
-								</goals>
-								<configuration>
-									<arguments>--no-color</arguments>
-									<arguments>--project=${project.artifactId}</arguments>
-									<arguments>--dev</arguments>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-```
-using this Gruntfile.js example:
+This tool use grunt. You have to insert a Gruntfile.js file in your root project folder.
+A gruntfile.js example:
 ```js
 module.exports = function(grunt) {
 var project=(grunt.option( "project" )==undefined)?'':grunt.option( "project" );
@@ -295,6 +248,54 @@ font:{target:'target/'+project+'/WEB-INF/fonts/'}
 };
 
 ```
+
+
+
+
+## Bower Overrides
+To override a property, or lack of, in one of your dependency's `bower.json` file, you may specify an `overrides` object in your own `bower.json`.
+
+## Maven
+You can integrate this plugin with maven using [frontend-maven-plugin](https://github.com/eirslett/frontend-maven-plugin). A example of configuration is :
+```xml
+		<plugin>
+						<groupId>com.github.eirslett</groupId>
+						<artifactId>frontend-maven-plugin</artifactId>
+						<version>0.0.23</version>
+						<executions>
+							<execution>
+								<id>npm install</id>
+								<goals>
+									<goal>npm</goal>
+								</goals>
+								<configuration>
+									<arguments>install</arguments>
+								</configuration>
+							</execution>
+							<execution>
+								<id>bower install</id>
+								<goals>
+									<goal>bower</goal>
+								</goals>
+								<configuration>
+									<arguments>install</arguments>
+								</configuration>
+							</execution>
+							<execution>
+								<id>grunt build</id>
+								<goals>
+									<goal>grunt</goal>
+								</goals>
+								<configuration>
+									<arguments>--no-color</arguments>
+									<arguments>--project=${project.artifactId}</arguments>
+									<arguments>--dev</arguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+```
+
 
 ## Contributing
 This package is used personally, but it might be extended with new features.
