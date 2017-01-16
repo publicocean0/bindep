@@ -131,47 +131,7 @@ The optional parameters search and nodeps might be used just if necessary , for 
 
 The sub dependencies of the package are automatically injected if 'nodeps' parameter is set.
 The filter is optional and permits to filter the resources of that package.
-Set the the right options for your project :
-```js
-development : it adds dev-dependencies , forces the setting of  every block as 'linked  separated'
-localDependencies: you can add dependencies not deployed in bower system , but just locally in your project,
-templates:{target:<path where to place the final html or frontend templates(like tpl,velocity,freemarker,...)>,sources:<array of html or frontend templates files>},
-
-attachments:{
-<file extension>: {replacement:{link:<text to replace with {{file}} injection> ,inline:<text to replace with {{source}} injection>},target:<final directory where to place the resources>},
-.......
-}.
-```
-The default setting is :
-```js
-{
-separator: grunt.util.linefeed,
-development: false, 
-localDependencies:{},
-packageHandler:undefined,// handler for fix eventually errors in external bower packages.
-minifyHandlers:// internal handlers can be overriden
-js:minifyJS,
-css:minifyCSS
-},
-development:false,// if true the block will be forced to bindind in mapped way , disabling also the minification.
-exclude:[],  
-templates:[{target:'target/'+project+'/WEB-INF/ftl/',sources:['src/main/ftl/**/*.ftl']},{target:'target/'+project+'/WEB-INF/js/',sources:['src/main/js/templates/**/*.js'],linksOnDebug:false}],
-attachments:{
-js: {replacement:{link:'<script src="/js/{{file}}"></script>',inline:'<script>{{source}}</script>'},target:'js/'},
-css:{replacement:{link:'<link rel="stylesheet" href="/css/{{file}}" />',inline:'<style><{{source}}</style>'},target:'css/'}
-},
-resources:{
-
-}
-
-
-}
-```
 Let `bind` work its magic:
-
-
-
-
 ```html
 <html>
 <head>
@@ -193,6 +153,7 @@ Let `bind` work its magic:
 ### [Grunt](http://gruntjs.com)
 
 This tool use grunt. You have to insert a Gruntfile.js file in your root project folder.
+In this file you set you setup your project configuration.
 A gruntfile.js example:
 ```js
 module.exports = function(grunt) {
