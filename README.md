@@ -43,8 +43,21 @@ it is born (original name was grunt-resourcesbinder) for my needs using a high m
    }
    }
 ```
-
-
+Bindep is conversative so you can use old bowers components. A common case in which you can use is bootstrap bower
+```
+{
+  "name": "bootstrap",
+  ....
+  "main": [
+    "less/bootstrap.less",
+    "dist/js/bootstrap.js"
+  ],
+ ....
+  "dependencies": {
+    "jquery": "1.9.1 - 3"
+  }
+}
+```
 ## Getting Started
 Install the module with [npm](https://npmjs.org): 
 ```bash
