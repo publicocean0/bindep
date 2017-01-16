@@ -222,7 +222,7 @@ If you use maven, for building a web project , you can add the plugin  [frontend
 		<plugin>
 						<groupId>com.github.eirslett</groupId>
 						<artifactId>frontend-maven-plugin</artifactId>
-						<version>0.0.23</version>
+						<version>1.0</version>
 						<executions>
 							<execution>
 								<id>npm install</id>
