@@ -43,7 +43,7 @@ it is born (original name was grunt-resourcesbinder) for my needs using a high m
    }
    }
 ```
-Bindep is conversative so you can use old bowers components. A common case in which you can use is bootstrap bower
+Bindep is conversative so you can use old bowers components. For example:
 ```
 {
   "name": "bootstrap",
