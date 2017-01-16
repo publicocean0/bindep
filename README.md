@@ -152,7 +152,7 @@ Let `bind` work its magic:
 
 ### [Grunt](http://gruntjs.com)
 
-This tool use grunt. You have to insert a Gruntfile.js file in your root project folder.
+Bindep uses grunt. You have to insert a Gruntfile.js file in your root project folder.
 In this file you set you setup your project configuration.
 A gruntfile.js example:
 ```js
@@ -217,7 +217,7 @@ font:{target:'target/'+project+'/WEB-INF/fonts/'}
 To override a property, or lack of, in one of your dependency's `bower.json` file, you may specify an `overrides` object in your own `bower.json`.
 
 ## Maven
-If you use maven, for building a web project , you can add the plugin  [frontend-maven-plugin](https://github.com/eirslett/frontend-maven-plugin)  permitting to call bindep before  creating a war. A example of configuration is :
+If you use maven, for building a web project , you can add the plugin  [frontend-maven-plugin](https://github.com/eirslett/frontend-maven-plugin)  permitting to call bindep before creating a war. A example about configuration is :
 ```xml
 		<plugin>
 						<groupId>com.github.eirslett</groupId>
