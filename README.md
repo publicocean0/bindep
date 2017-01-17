@@ -24,8 +24,11 @@ It introduces few little concepts for its working:
  <li> defaults:you can set the default behavior for preprocessor (context passed),modules used,submodules used in the dependencies actived. </li>
     </ul>
 Bindep is used normaly by web developers and the default setting handles css,js,less as attachmnents.You can modify it or extend it for supporting other attachments-type,behaviours,target folder,... You can set your converter for example for sass files.   
-it is born (original name was grunt-resourcesbinder) for my needs using a high modularity level in my projects.Bindep for working extends the bower json definition with other properties.Bottom you can see a example :
+it is born (original name was grunt-resourcesbinder) for my needs using a high modularity level in my projects.Bindep for working extends the bower json definition with other properties.Bottom you can see a example about the bower.json part containing new properties:
 ```js
+{
+  name:"example",
+  main:["core.js","core.css"],
   "resources": { // you can remove if empty
   "mp3":"audio1.mp3",
   "font":"font/*"
@@ -44,7 +47,10 @@ it is born (original name was grunt-resourcesbinder) for my needs using a high m
    "mp3":["audio2.mp3","audio3,mp3"],
    "require":[....]
    }
-   }
+   },
+   
+     "dependencies":{ "jquery":"^3.0.0" }
+   
    }
 ```
 Bindep is conversative so you can use old bowers components if they don't need additional info. For example:
