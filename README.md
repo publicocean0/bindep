@@ -137,6 +137,14 @@ where
 - nounique is optional and permits to repeat the same package in the template.
 - preprocess is optional and permits to preprocess the source files passing options. 
 
+```
+<!-- @bind:js inline aggregated uglified
+			html5shiv
+			respond
+ 			frontend-miscellaneous[=$ "browser-extension.js"]
+
+	-->
+```
 Bottom you can see a example in which you active the preprocessor for the component 'example'  and you pass to it 2 properties
 ```
    example2 preprocess (mode:1  platform: mobile)
