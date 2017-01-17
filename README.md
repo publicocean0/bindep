@@ -18,8 +18,8 @@ It introduces few little concepts for its working:
  <li> minimizer:a attachment can be minified/uglified.In development mode is disabled.</li>
  <li> resource: is a text or a binary file present in a bower component but has no direct reference in the template.</li>
  <li> dependency: a bower component can use many bower component as dependencies. You can also define also local dependencies defined internally in your project. </li>
- <li> module: a bower component can contains many modules (or no one). Internal modules are necessary when you design your software project in way you can load additional feature in a component,but it is not a must. For each module you can add attachments,resources,dependencies.You can also define what modules require this module.In the template you can specify what modules to embed in the project </li>
-<li> converter: is a handler permitting to convert a file type in a attachment. By default is setup just less converter permitting to convert less files in css files.</li>
+ <li> module: a bower component can contains many modules (or no one). Internal modules are necessary when you design your software project in way you can load additional features in a component,but it is not a must. For each module you can add attachments,resources,dependencies.You can also define what modules require this module.In the template you can specify what modules to embed in the project </li>
+<li> converter: is a handler permitting to convert a file type in a attachment. Actually is setup just the less converter permitting to convert less files in css files,but you can add others in options.</li>
  <li> preprocessor: bindep can use a additional preprocessor for attachments passing directly options in your tag-block.The preprocessor syntax you can embed in you attachments can be find [here](https://github.com/dcodeIO/Preprocessor.js) </li>
  <li> defaults:you can set the default behavior for preprocessor (context passed),modules used,submodules used in the dependencies actived. </li>
     </ul>
