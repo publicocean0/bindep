@@ -244,7 +244,7 @@ In console you can type
 ```
 grunt -dev
 ```
-Pay attention to pass -dev, because the minification take a lot of time. 
+Pay attention to pass -dev, because the minification can take time. 
 
 
 ## Bower Overrides
