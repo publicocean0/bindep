@@ -240,8 +240,11 @@ font:{target:'target/'+project+'/WEB-INF/fonts/'}
 };
 
 ```
-
-
+In console you can type 
+```
+grunt -dev
+```
+Pay attention to pass -dev, because the minification take a lot of time. 
 
 
 ## Bower Overrides
