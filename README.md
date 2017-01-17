@@ -146,10 +146,10 @@ Bottom a example about filtering and about modules setting.
 
 -->
 ```
-Bottom you can see a example in which you active the preprocessor for the component 'example'  and you pass to it 2 properties
+Bottom you can see a example in which you active the preprocessor for the component 'example'  and you pass to it 3 properties
 ```
 <!-- @bind:js inline aggregated uglified
-            example2 preprocess (mode:1  platform: mobile)
+            example2 preprocess (mode:1  platform: "mobile" withColours: true )
 -->  
 ```
 The optional parameters search and nodeps might be used just if necessary , for example where a external bower  package contains different versions in the same package  or optional dependencies. 
