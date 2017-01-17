@@ -137,11 +137,11 @@ where
 - nounique is optional and permits to repeat the same package in the template.
 - preprocess is optional and permits to preprocess the source files passing options. 
 
-Bottom a example about filtering in a bower component.
+Bottom a example about filtering and about modules setting.
 ```
 <!-- @bind:js inline aggregated uglified
 			html5shiv
-			respond
+			respond (res1,res2)
  			frontend-miscellaneous[=$ "browser-extension.js"]
 
 -->
