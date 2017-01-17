@@ -135,8 +135,10 @@ where op comparator is :
 where 
 - nodeps is optional and force to not inject the dependencies 
 - nounique is optional and permits to repeat the same package in the template.
-- preprocess is optional and permits to preprocess the source files passing options
-
+- preprocess is optional and permits to preprocess the source files passing options. You can see a example passing you properties to the preprocessor
+   ```
+   example2 process (mode:2  platform: mobile)
+   ```
 The optional parameters search and nodeps might be used just if necessary , for example where a external bower  package contains different versions in the same package  or optional dependencies. 
 
 The sub dependencies of the package are automatically injected if 'nodeps' parameter is set.
