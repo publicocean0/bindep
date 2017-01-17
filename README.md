@@ -136,6 +136,7 @@ where
 - nodeps is optional and force to not inject the dependencies 
 - nounique is optional and permits to repeat the same package in the template.
 - preprocess is optional and permits to preprocess the source files passing options. 
+
 Bottom a example about filtering in a bower component.
 ```
 <!-- @bind:js inline aggregated uglified
