@@ -18,7 +18,7 @@ It introduces few little concepts for its working:
  <li> minimizer:a attachment can be minified/uglified.In development mode is disabled.</li>
  <li> resource: is a text or a binary file present in a bower component but has no direct reference in the source.</li>
  <li> dependency: a bower component can use many bower component as dependencies. You can also define also local dependencies defined internally in your project. </li>
- <li> module: a bower component can contains many modules. For each module you can add.</li> attachments,resources,dependencies.You can also define what modules require this module. </li>
+ <li> module: a bower component can contains many modules (or no one). Internal modules are necessary when you design your software project in way you can load additional feature in a component,but it is not a must. For each module you can add attachments,resources,dependencies.You can also define what modules require this module. </li>
 <li> converter: is a handler permitting to convert a file type in a attachment. By default is setup just less converter permitting to convert less files in css files.</li>
  <li> preprocessor: bindep can use a additional preprocessor for attachments passing directly options in your tag-block.The preprocessor syntax you can embed in you attachments can be find [here](https://github.com/dcodeIO/Preprocessor.js) </li>
  <li> defaults:you can set the default behavior for preprocessor (context passed),modules used,submodules used in the dependencies actived. </li>
@@ -26,20 +26,24 @@ It introduces few little concepts for its working:
 Bindep is used normaly by web developers and the default setting handles css,js,less as attachmnents.You can modify it or extend it for supporting other attachments-type,behaviours,target folder,... You can set your converter for example for sass files.   
 it is born (original name was grunt-resourcesbinder) for my needs using a high modularity level in my projects.Bindep for working extends the bower json definition with other properties.Bottom you can see a example :
 ```js
-  "resources": {
-  "mp3":"mp3/*",
+  "resources": { // you can remove if empty
+  "mp3":"audio1.mp3",
   "font":"font/*"
   },
-  "defaults":{
+  "defaults":{ // you can remove if empty
 "preprocessor":{"c":4},//default context for preprocessor(if you active it)
 "submodules":{"filedetector":["image"]},	//submodules used in the dependencies
 "modules":['preview'] // default modules used in the current bower component
 },
-  "modules":{
+  "modules":{ // you can remove if empty
+   
    "preview":{
-   "main":["js/linkPreviewInterceptor.js"],
-   "dependencies":{},
-   "resources":{}
+   "main":["js/preview.js"],
+   "dependencies":{ "moment":"^1.0.0" },
+   "resources":{
+   "mp3":["audio2.mp3","audio3,mp3"],
+   "require":[....]
+   }
    }
    }
 ```
