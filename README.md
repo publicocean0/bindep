@@ -27,8 +27,8 @@ Bindep is used normaly by web developers and the default setting handles css,js,
 it is born (original name was grunt-resourcesbinder) for my needs using a high modularity level in my projects.Bindep for working extends the bower json definition with other properties.Bottom you can see a example about the bower.json part containing new properties:
 ```js
 {
-  name:"example",
-  main:["core.js","core.css"],
+  "name":"example",
+  "main":["core.js","core.css"],
   "resources": { // you can remove if empty
   "mp3":"audio1.mp3",
   "font":"font/*"
@@ -164,11 +164,17 @@ Let `bind` work its magic:
 
 Bindep uses grunt. You have to insert a Gruntfile.js file in your root project folder.
 In this file you set you setup your project configuration.
+Essentially you can set:
+- paths where bindep reads template files
+- local dependencies present in your projects, if you need
+- development:if true minimization and aggregations of attachments is skipped
+- attachments: folders where bindep searchs files, target folder where bindep put the final output,the type of replament you want
+- resources: for each resource type you define the folder where bind save the final output
+You can pass other options not usually necessary as additional converters (it is present just less converter actually),a custom package handler for fixing errors in external bower component,.....
 A gruntfile.js example:
 ```js
 module.exports = function(grunt) {
 var project=(grunt.option( "project" )==undefined)?'':grunt.option( "project" );
-
 grunt.initConfig({
 // Before generating any new files, remove any previously-created files.
 
@@ -193,7 +199,7 @@ if (n=='qtip2') {
 	mains.push('bloodhound.js');
 }
 
-},// {target:'target/'+project+'/WEB-INF/ftl/',sources:['src/main/ftl/**/*.ftl']},
+},
 templates:[{target:'target/'+project+'/WEB-INF/ftl/',sources:['src/main/ftl/**/*.ftl']},{target:'target/'+project+'/WEB-INF/js/',sources:['src/main/js/templates/**/*.js'],linksOnDebug:false}],
 development:grunt.option( "dev" )!==undefined,
 shortLinks:true,
