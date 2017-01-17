@@ -139,11 +139,11 @@ where
 
 Bottom you can see a example in which you active the preprocessor for the component 'example'  and you pass to it 2 properties
 ```
-   example2 process (mode:1  platform: mobile)
+   example2 preprocess (mode:1  platform: mobile)
 ```
 The optional parameters search and nodeps might be used just if necessary , for example where a external bower  package contains different versions in the same package  or optional dependencies. 
 
-The sub dependencies of the package are automatically injected if 'nodeps' parameter is set.
+The sub dependencies of the package are automatically injected if 'nodeps' parameter is not set.
 The filter is optional and permits to filter the resources of that package.
 Let `bind` work its magic:
 ```html
