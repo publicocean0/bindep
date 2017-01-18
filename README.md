@@ -53,7 +53,7 @@ it is born (original name was grunt-resourcesbinder) for my needs using a high m
    
    }
 ```
-Bindep is conversative so you can use old bowers components if they don't need additional info. For example:
+Bindep is conversative so you can use old bowers components if they don't need additional info. Less file will be converted automatically in a css file. For example:
 ```
 {
   "name": "bootstrap",
