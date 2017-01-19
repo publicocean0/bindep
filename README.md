@@ -23,8 +23,10 @@ It introduces few little concepts for its working:
  <li> preprocessor: bindep can use a additional preprocessor for attachments passing directly options in your tag-block.The preprocessor syntax you can embed in you attachments can be find [here](https://github.com/dcodeIO/Preprocessor.js) </li>
  <li> defaults:you can set the default behavior for preprocessor (context passed),modules used,submodules used in the dependencies actived. </li>
     </ul>
-Bindep is used normaly by web developers and the default setting handles css,js,less as attachmnents.You can modify it or extend it for supporting other attachments-type,behaviours,target folder,... You can set your converter for example for sass files.   
-it is born (original name was grunt-resourcesbinder) for my needs using a high modularity level in my projects.Bindep for working extends the bower json definition with other properties.Bottom you can see a example about the bower.json  containing new properties:
+Bindep is used normaly by web developers and the default setting handles css,js,less as attachmnents.You can modify it or extend it for supporting other attachments-type,behaviours,target folder,... You can set your converter for example for sass files. 
+Why bindep?
+Bower created a repository very usefull for handling components but the model designed is too much simple. In many real cases you can't process automatically because the information inside is not sufficient: for example you can't process a project in which you want define some optional parts to inject just in specific cases, it is difficult to place correctly resources used inside a project in a specific position defined by software designer,you can't use a preprocessor for creating source code specific for a use case. Bindep extends the bower model permitting to use bower repository also when you want design complex project. 
+It is born (original name was grunt-resourcesbinder) for my needs using a high modularity level in my projects.Bindep for working extends the bower json definition with other properties.Bottom you can see a example about the bower.json  containing new properties:
 ```js
 {
   "name":"example",
