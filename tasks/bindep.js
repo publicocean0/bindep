@@ -9,6 +9,9 @@ var md5 = require('md5-hex');
 var jsParser = require("uglify-js");
 var cssParser = require('uglifycss');
 var less =require("less");
+var styl=require("styl");
+var yaml = require('js-yaml');
+var sass = require('node-sass');
 less.logger.addListener({
     debug: console.log,
     info: console.log,
@@ -23,6 +26,22 @@ path: require('path'),
 glob:require('glob'),
 preprocessor:require('preprocessor')
 };
+var stylExecute=function(f,source){
+var s=source instanceof Buffer?source.toString('utf-8'):source;
+return styl(s, { whitespace: true });
+}
+var yalmExecute=function(f,source){
+var s=source instanceof Buffer?source.toString('utf-8'):source;
+return yaml.safeLoad(s);
+}
+var sassExecute=function(f,source){
+var s=source instanceof Buffer?source.toString('utf-8'):source;
+return  sass.renderSync({
+  data: s,
+  file:f,
+  includePaths:[$.path.dirname(f)]
+});
+}
 var lessExecute =function(f,source){
 	
 	var s=source instanceof Buffer?source.toString('utf-8'):source;
@@ -57,9 +76,14 @@ development: false,
 skipNoUpdates:false, 
 shortLinks:true,
 packageHandler:undefined,
-localDependencies:{},
+localDependencies:{}, 
 converters:{
-less:{	execute:lessExecute,type:'css'}},
+less:{	execute:lessExecute,type:'css'},
+styl:{	execute:stylExecute,type:'css'},
+sass:{	execute:sassExecute,type:'css'},
+yalm:{	execute:yalmExecute,type:'js'}
+
+},
 minifyHandlers:{
 js:minifyJS,
 css:minifyCSS
