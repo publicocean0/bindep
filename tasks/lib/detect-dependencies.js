@@ -148,7 +148,7 @@ for (var k in m){
 var mm=m[k];
 
 var mains = findFiles(mm,cwd,'main');
-if (mains.length==0) throw new Error("cannot find a valid path for module "+component+"."+k);
+//if (mains.length==0) console.log("no valid path for module "+component+"."+k);
 
 
 modules[k]={resources:findFiles(mm,cwd,'resources',false),name:k,main:mains,dependencies:{},require:findRequire(componentConfigFile,k,mm)}	
@@ -249,8 +249,8 @@ error.code = 'PKG_NOT_INSTALLED';
 throw error;
 
 return;
-}
-
+} 
+ 
 var overrides = config.get('overrides');
 if (overrides && overrides[component]) {
 if (overrides[component].dependencies) {
@@ -263,7 +263,7 @@ componentConfigFile.main = overrides[component].main;
 var cwd = local?config.get('cwd'):$.path.join(config.get('bower-directory'), component);
 var mains = findFiles(componentConfigFile,cwd,'main',true);
 if (mains.length==0) mains = findDefaultMainFiles(local,config, component, componentConfigFile,cwd);
-if (mains.length==0) throw new Error("cannot find a valid path for component "+component);
+//if (mains.length==0) throw new Error("cannot find a valid path for component "+component);
 var fileTypes = $._.chain(mains).map($.path.extname).unique().value();
 
 
