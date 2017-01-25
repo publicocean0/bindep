@@ -19,7 +19,7 @@ It introduces few little concepts for its working:
  <li> resource: is a text or a binary file present in a bower component but has no direct reference in the template.</li>
  <li> dependency: a bower component can use many bower component as dependencies. You can also define also local dependencies defined internally in your project. </li>
  <li> module: a bower component can contains many modules (or no one). Internal modules are necessary when you design your software project in way you can load additional features in a component,but it is not a must. For each module you can add attachments,resources,dependencies.You can also define what modules require this module.In the template you can specify what modules to embed in the project </li>
-<li> converter: is a handler permitting to convert a file type in a attachment. Actually is setup less,sass,styl,yalm converters. You can add other converters directly in options.</li>
+<li> converter: is a handler permitting to convert a file type in a attachment. Actually is set up less,sass,styl,yalm converters. You can add other converters directly in options.</li>
  <li> preprocessor: bindep can use a additional preprocessor for attachments passing directly options in your tag-block.The preprocessor syntax you can embed in you attachments can be find [here](https://github.com/dcodeIO/Preprocessor.js) </li>
  <li> defaults:you can set the default behavior for preprocessor (context passed),modules used,submodules used in the dependencies actived. </li>
     </ul>
@@ -251,9 +251,6 @@ grunt -dev
 ```
 Pay attention to pass -dev, because the minification can take time. 
 
-
-## Bower Overrides
-To override a property, or lack of, in one of your dependency's `bower.json` file, you may specify an `overrides` object in your own `bower.json`.
 
 ## Maven
 If you use maven, for building a web project , you can add the plugin  [frontend-maven-plugin](https://github.com/eirslett/frontend-maven-plugin)  permitting to call bindep before creating a war. A example about configuration is :
