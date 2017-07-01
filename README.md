@@ -40,7 +40,7 @@ It is born (original name was grunt-resourcesbinder) for my needs using a high m
   },
   "defaults":{ // you can remove if empty
 "preprocessorEnabled":true,// default is false
-"preprocessorContext":{"c":4},//default context for preprocessor(if you active it)
+"preprocessorContext":{"c":4},//default context for preprocessor
 "submodules":{"filedetector":["image"]},	//submodules used in the dependencies
 "modules":['preview'] // default modules used in the current bower component
 },
