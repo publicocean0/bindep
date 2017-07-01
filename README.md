@@ -39,7 +39,8 @@ It is born (original name was grunt-resourcesbinder) for my needs using a high m
   "font":"font/*"
   },
   "defaults":{ // you can remove if empty
-"preprocessor":{"c":4},//default context for preprocessor(if you active it)
+"preprocessorEnabled":true,// default is false
+"preprocessorContext":{"c":4},//default context for preprocessor
 "submodules":{"filedetector":["image"]},	//submodules used in the dependencies
 "modules":['preview'] // default modules used in the current bower component
 },
@@ -58,7 +59,7 @@ It is born (original name was grunt-resourcesbinder) for my needs using a high m
    
    }
 ```
-Bindep is conversative so you can use old bowers components if they don't need additional info. Less file will be converted automatically in a css file. For example:
+Bindep is conversative so you can use old bowers components if they don't need additional info(adding preprocessor macros pay attention to the way in which are written) Less file will be converted automatically in a css file. For example:
 ```
 {
   "name": "bootstrap",
