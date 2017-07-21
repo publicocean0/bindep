@@ -39,7 +39,7 @@ It is born (original name was grunt-resourcesbinder) for my needs using a high m
   "font":"font/*"
   },
   "defaults":{ // you can remove if empty
-"preprocessorEnabled":true,// default is false
+"enablePreprocessor":true,// default is false
 "preprocessorContext":{"c":4},//default context for preprocessor
 "submodules":{"filedetector":["image"]},	//submodules used in the dependencies
 "modules":['preview'] // default modules used in the current bower component
@@ -221,7 +221,7 @@ if (n=='qtip2') {
 }
 
 },
-templates:[{target:'target/'+project+'/WEB-INF/ftl/',sources:['src/main/ftl/**/*.ftl']},{target:'target/'+project+'/WEB-INF/js/',sources:['src/main/js/templates/**/*.js'],linksOnDebug:false}],
+templates:[{target:'target/'+project+'/WEB-INF/ftl/',extension:'ftl',sources:['src/main/ftl/**/*.ftl']},{target:'target/'+project+'/WEB-INF/js/',sources:['src/main/js/templates/**/*.js'],linksOnDebug:false}],
 development:grunt.option( "dev" )!==undefined,
 shortLinks:true,
 
@@ -252,6 +252,7 @@ grunt -dev
 ```
 Pay attention to pass -dev, because the minification can take time. 
 
+You can find a example working at https://github.com/publicocean0/qrcodereader/tree/master/test
 
 ## Maven
 If you use maven, for building a web project , you can add the plugin  [frontend-maven-plugin](https://github.com/eirslett/frontend-maven-plugin)  permitting to call bindep before creating a war. A example about configuration is :
