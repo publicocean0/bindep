@@ -303,8 +303,7 @@ This package is used personally, but it might be extended with new features.
 ## License
 Copyright (c) 2015 Lorenzetto Cristian. Licensed under the MIT license.
 
-## To do
-Not all features implemented are tested so much. I will test them in the time using them in the real projects. Custom preprocessing ,overrides, bower dependencies recalling submodules(in deep levels) are features not yet tested in projects. 
+
 
 
 
