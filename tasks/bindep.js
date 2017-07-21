@@ -290,7 +290,7 @@ module.exports = function(grunt) {
             if (!grunt.file.exists(file)) {
                 throw new Error('Source file "' + file + '" not found.');
             }
-            return String($.fs.readFileSync(file));
+            return (String($.fs.readFileSync(file))).toString();
         }
 
         function getCollapsedFile(filepath, index) {
@@ -301,16 +301,30 @@ module.exports = function(grunt) {
             var f = depname + "." + (mimified ? 'min.' : '') + filetype;
             return preprocessEnabled ? getUniqueDest(f, preprocessContext) : f;
         }
+        
+        function replace(token,repl,source){
+			var pos,p=0;
+			do {
+			 pos=repl.indexOf(token,p)	
+			 if (pos>=0){
+				repl=repl.substring(p,pos)+source  + options.separator+repl.substring(pos+token.length)
+				p=pos+source.length
+			 } else break;
+				
+			} while(true)
+            // the path of file is inside the replacement because front-end logic is unknow here
+            return repl	
+			
+		}
 
         function getSourceReplacement(repl, source) {
-            // the path of file is inside the replacement because front-end logic is unknow here
-            return repl.replace('{{source}}', source) + options.separator
+			return replace('{{source}}',repl,source)
 
         }
 
         function getLinkReplacement(repl, depname, mimified, filetype, preprocessorContext,preprocessEnabled) {
             // the path of file is inside the replacement because front-end logic is unknow here
-            return repl.replace('{{file}}', renderLinkFile(depname, mimified, filetype, preprocessorContext,preprocessEnabled)) + options.separator
+            return replace('{{file}}',repl, renderLinkFile(depname, mimified, filetype, preprocessorContext,preprocessEnabled)) + options.separator
         }
 
         function getAbsolutePath(f) {
@@ -393,12 +407,19 @@ module.exports = function(grunt) {
                 var tmp;
                 if (aggrtype == 'separated') {
                     tmp = getContent(m);
-                    if (_preprocessEnabled) tmp = preprocessor(tmp, _preprocessContext);
+                   
+                    if (_preprocessEnabled) tmp = preprocessor($.path.dirname(m),tmp, _preprocessContext);
                     if (ismini) tmp = options.minifyHandlers[blocktype](tmp, minified != 'minified');
-                    buffer += (ext != blocktype) ? getSourceReplacement(repl, tmp) : tmp;
+                    if (ext != blocktype) {
+						 var rep=getSourceReplacement(repl, tmp)
+						 buffer +=  rep ;
+						if (rep.indexOf('\'</script>')>=0) grunt.log.writeln('****&&&'+tmp);
+                    }
+                    else  buffer +=  tmp;
+                  
                 } else {
                     tmp = getContent(m);
-                    if (_preprocessEnabled) tmp = preprocessor(tmp, _preprocessContext);
+                    if (_preprocessEnabled) tmp = preprocessor($.path.dirname(m),tmp, _preprocessContext);
                     buffer += tmp;
                 }
 
@@ -433,7 +454,8 @@ module.exports = function(grunt) {
 
                 var mains = depi.main.concat(convertedMains(blocktype, name));
                 var preprocessContext = depi.defaults.preprocessorContext||{};
-                var preprocessEnabled=depi.defaults.preprocessorEnabled || false
+                var preprocessEnabled=depi.defaults.enablePreprocessor || false
+                
                 var modulesdeps = {};
                 var cwd = depi.cwd;
                 var modules = submodulesdef[name] ? submodulesdef[name] : (depi.defaults.modules || []);
@@ -608,10 +630,12 @@ module.exports = function(grunt) {
                     if (!enablePreprocess) preprocessContext={}
                         
                     if (dep.defaults) {
-						enablePreprocess = enablePreprocess|| dep.defaults.preprocessorEnabled || false;
+						
+						enablePreprocess = enablePreprocess|| dep.defaults.enablePreprocessor || false;
                         if (dep.defaults.preprocessorContext) preprocessContext = extend(dep.defaults.preprocessorContext, preprocessContext);
                         
                     }
+                    
                     var norepeat = match[24] != null;
                     var modules = [];
                     var smains = [];
@@ -755,7 +779,7 @@ module.exports = function(grunt) {
 
                         index++;
                     } else if (replacetype === 'inline') {
-                        if (enablePreprocess) buffer = preprocessor(buffer, preprocessContext);
+                        if (enablePreprocess) buffer = preprocessor($.path.dirname(filepath),buffer, preprocessContext);
                         if (ismini) buffer = options.minifyHandlers[blocktype](buffer, minified != 'minified');
 
                         if (ext != blocktype) buffer = getSourceReplacement(repl, buffer);
@@ -842,7 +866,7 @@ module.exports = function(grunt) {
         }
 
         function minifyJS(f, mangled, ast) {
-
+          
             var code = stripComments(f, mangled);
             var toplevel = jsParser.parse(code, {
                 toplevel: ast
@@ -931,19 +955,24 @@ module.exports = function(grunt) {
                     {
                         var source;
                         var type = getFileType(c.source);
-                        source = $.fs.readFileSync(c.source);
+                        source = $.fs.readFileSync(c.source).toString();
+                       
                         var converter = options.converters[type];
                         if (converter) source = converter.execute(c.source, source);
                         if (c.minified !== undefined && c.minified) {
+								
                             if (c.preprocessEnabled) {
-                                source = preprocessor(source, c.preprocessContext);
+							
+                                source = preprocessor($.path.dirname(c.source),source, c.preprocessContext);
                             }
+                            
                             source = options.minifyHandlers[getFileType(c.source)](source, c.minified !== 'minified');
+                             
                             if (save(source, c.dest)) grunt.log.writeln('\t-' + c.dest + ((converter) ? ' converted and saved' : ' saved'));
                             else grunt.log.writeln('\t-' + c.dest + ' unchanged');
                         } else {
                             if (c.preprocessEnabled) {
-                                source = preprocessor(source, c.preprocessContext);
+                                source = preprocessor($.path.dirname(c.source),source, c.preprocessContext);
                             }
                             if (save(source, c.dest, c.binary)) grunt.log.writeln('\t-' + c.dest + ((converter) ? ' converted and saved' : ' saved'));
                             else grunt.log.writeln('\t-' + c.dest + ' unchanged');
@@ -957,8 +986,8 @@ module.exports = function(grunt) {
                         if (c.minified !== undefined) {
                             c.sources.forEach(function(s) {
                                 var type = getFileType(s);
-                                source = $.fs.readFileSync(s);
-                                if (c.preprocessEnabled) source = preprocessor(source, c.preprocessContext);
+                                source = $.fs.readFileSync(s).toString();
+                                if (c.preprocessEnabled) source = preprocessor($.path.dirname(s),source, c.preprocessContext);
                                 var converter = options.converters[type];
                                 if (converter) source = converter.execute(c.source, source);
                                 source += options.minifyHandlers[type](source, isugly);
@@ -967,7 +996,7 @@ module.exports = function(grunt) {
                             c.sources.forEach(function(s) {
                                 var converter = options.converters[type],
                                     cc = getContent(s);
-                                if (c.preprocessEnabled) cc = preprocessor(cc, c.preprocessContext);
+                                if (c.preprocessEnabled) cc = preprocessor($.path.dirname(s),cc, c.preprocessContext);
                                 if (converter) cc = converter.execute(s, cc);
                                 source += cc;
                             });
@@ -999,26 +1028,30 @@ module.exports = function(grunt) {
             }
         }
 
-        function preprocessor(source, context) {
-
-            var pp = new $.preprocessor(source, ".");
+        function preprocessor(path,source, context) {
+            
+            var pp = new $.preprocessor(source, path||'.');
             return pp.process(context);
 
         }
 
-        function processFiles(files, target, commands, ld) {
+        function processFiles(files, target,ext, commands, ld) {
             // Iterate over all src-dest file pairs.
 
             for (var j = 0; j < files.length; j++) {
                 var res = files[j].match(/^[^**]*/);
-                var basename = res[0];
+                var basename = $.path.parse(res[0]).dir;
+                
                 var mfiles = grunt.file.expandMapping(files[j], target, {
                     rename: function(destBase, destPath) {
-                        return destBase + destPath.replace(basename, '');
+						var d=destPath.replace(basename||destBase, '');
+						var file=$.path.parse(d)
+					
+                        return ext?destBase + file.name+'.'+ext:destBase + file.name+file.ext;
                     }
                 });
 
-
+				
 
                 mfiles.forEach(function(filemap) {
                     var filepath = currentDir + filemap.src;
@@ -1031,9 +1064,9 @@ module.exports = function(grunt) {
                     }
                     // Read file source.
 
-
+					
                     var replacements = options.attachments;
-                    var dest = filemap.dest;
+                    var dest = filemap.dest 
 
                     // Print a success message.
                     grunt.log.writeln('* Processing ' + filepath + ":");
@@ -1060,11 +1093,11 @@ module.exports = function(grunt) {
             for (var j = 0; j < options.templates.length; j++) {
                 templates = options.templates[j];
                 var ld = templates.linksOnDebug || true;
-                processFiles(templates.sources, templates.target, commands, ld);
+                processFiles(templates.sources, templates.target,templates.extension, commands, ld);
             }
         } else {
             var ld = templates.linksOnDebug || true;
-            processFiles(options.templates.sources, options.templates.target, commands, ld);
+            processFiles(options.templates.sources, options.templates.target,templates.extension, commands, ld);
         }
         commands = purgeCommands(commands);
 
