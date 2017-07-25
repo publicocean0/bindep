@@ -44,9 +44,9 @@ It is born (original name was grunt-resourcesbinder) for my needs using a high m
 "preprocessorContext":{"c":4},//default context for preprocessor
 "components":{ // this part override component definition
 "modules":{
-"filedetector":["image"]
+"filedetector":["image"] //submodules used in the dependencies
 }
-},	//submodules used in the dependencies
+},	
 "modules":['preview'] // default modules used in the current bower component
 },
   "modules":{ // you can remove if empty
