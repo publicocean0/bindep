@@ -19,7 +19,7 @@ It introduces few little concepts for its working:
  <li> resource: is a text or a binary file present in a bower component but has no direct reference in the template.</li>
  <li> dependency: a bower component can use many bower component as dependencies. You can also define also local dependencies defined internally in your project. </li>
  <li> module: a bower component can contains many modules (or no one). Internal modules are necessary when you design your software project in way you can load additional features in a component,but it is not a must. For each module you can add attachments,resources,dependencies.You can also define what modules require this module.In the template you can specify what modules to embed in the project </li>
-<li> converter: is a handler permitting to convert a file type in a attachment. Actually is set up less,sass,styl,yalm converters. You can add other converters directly in options.</li>
+<li> converter: is a handler permitting to convert a file type in a attachment. Actually is set up less,sass,styl,yalm,coffee,typescript converters. You can add other converters directly in options.</li>
  <li> preprocessor: bindep can use a additional preprocessor for attachments passing directly options in your tag-block.The preprocessor syntax you can embed in you attachments can be find [here](https://github.com/dcodeIO/Preprocessor.js) </li>
  <li> defaults:you can set the default behavior for preprocessor (context passed),modules used,submodules used in the dependencies actived. </li>
     </ul>
@@ -34,6 +34,7 @@ It is born (original name was grunt-resourcesbinder) for my needs using a high m
 {
   "name":"example",
   "main":["core.js","core.css"],
+  "configurator":["grunt dist"], // if present it execute the command lines for configurating the component
   "resources": { // you can remove if empty
   "mp3":"audio1.mp3",
   "font":"font/*"
@@ -41,7 +42,11 @@ It is born (original name was grunt-resourcesbinder) for my needs using a high m
   "defaults":{ // you can remove if empty
 "enablePreprocessor":true,// default is false
 "preprocessorContext":{"c":4},//default context for preprocessor
-"submodules":{"filedetector":["image"]},	//submodules used in the dependencies
+"components":{ // this part override component definition
+"modules":{
+"filedetector":["image"]
+}
+},	//submodules used in the dependencies
 "modules":['preview'] // default modules used in the current bower component
 },
   "modules":{ // you can remove if empty
