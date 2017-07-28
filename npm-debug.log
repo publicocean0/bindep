@@ -1,0 +1,151 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/nodejs', '/usr/bin/npm', 'publish', '-force' ]
+2 info using npm@3.5.2
+3 info using node@v4.2.6
+4 warn using --force I sure hope you know what you are doing.
+5 verbose publish [ '.' ]
+6 silly cache add args [ '.', null ]
+7 verbose cache add spec .
+8 silly cache add parsed spec Result {
+8 silly cache add   raw: '.',
+8 silly cache add   scope: null,
+8 silly cache add   name: null,
+8 silly cache add   rawSpec: '.',
+8 silly cache add   spec: '/data/git/bindep',
+8 silly cache add   type: 'directory' }
+9 verbose addLocalDirectory /home/cristian/.npm/bindep/1.1.1/package.tgz not in flight; packing
+10 info lifecycle bindep@1.1.1~prepublish: bindep@1.1.1
+11 silly lifecycle bindep@1.1.1~prepublish: no script for prepublish, continuing
+12 verbose tar pack [ '/home/cristian/.npm/bindep/1.1.1/package.tgz',
+12 verbose tar pack   '/data/git/bindep' ]
+13 verbose tarball /home/cristian/.npm/bindep/1.1.1/package.tgz
+14 verbose folder /data/git/bindep
+15 verbose addLocalTarball adding from inside cache /home/cristian/.npm/bindep/1.1.1/package.tgz
+16 silly cache afterAdd bindep@1.1.1
+17 verbose afterAdd /home/cristian/.npm/bindep/1.1.1/package/package.json not in flight; writing
+18 verbose afterAdd /home/cristian/.npm/bindep/1.1.1/package/package.json written
+19 silly publish { _args: [ [ 'bindep@^1.1.1', '/data/git/chat-js/test' ] ],
+19 silly publish   _from: '.',
+19 silly publish   _id: 'bindep@1.1.1',
+19 silly publish   _inCache: true,
+19 silly publish   _installable: true,
+19 silly publish   _location: '/bindep',
+19 silly publish   _nodeVersion: '4.2.6',
+19 silly publish   _npmOperationalInternal:
+19 silly publish    { host: 's3://npm-registry-packages',
+19 silly publish      tmp: 'tmp/bindep-1.1.0.tgz_1500625192561_0.6937997350469232' },
+19 silly publish   _npmUser: { email: 'publicocean0@gmail.com', name: 'publicocean0' },
+19 silly publish   _npmVersion: '3.5.2',
+19 silly publish   _phantomChildren: {},
+19 silly publish   _requested:
+19 silly publish    { name: 'bindep',
+19 silly publish      raw: 'bindep@^1.1.0',
+19 silly publish      rawSpec: '^1.1.0',
+19 silly publish      scope: null,
+19 silly publish      spec: '>=1.1.0 <2.0.0',
+19 silly publish      type: 'range' },
+19 silly publish   _requiredBy: [ '/' ],
+19 silly publish   _shasum: '0a90828bbe481fdd7aa941f7547c174db21be79a',
+19 silly publish   _shrinkwrap: null,
+19 silly publish   _spec: 'bindep@^1.1.0',
+19 silly publish   _where: '/data/git/chat-js/test',
+19 silly publish   author: { name: 'Cristian Lorenzetto', email: 'publicocean0@gmail.com' },
+19 silly publish   bugs: { url: 'https://github.com/publicocean0/bindep/issues' },
+19 silly publish   dependencies:
+19 silly publish    { bower: '^1.8.0',
+19 silly publish      MD5: '^1.0.0',
+19 silly publish      'bower-config': '^0.5.0',
+19 silly publish      fs: '^0.0.2',
+19 silly publish      glob: '^4.4.0',
+19 silly publish      'js-yaml': '^3.7.0',
+19 silly publish      less: '^2.7.2',
+19 silly publish      lodash: '^2.4.1',
+19 silly publish      'md5-hex': '^2.0.0',
+19 silly publish      'node-sass': '^4.3.0',
+19 silly publish      path: '^0.11.14',
+19 silly publish      preprocessor: '^1.4.0 ',
+19 silly publish      styl: '^0.2.9',
+19 silly publish      'uglify-js': '^2.4.16',
+19 silly publish      uglifycss: '^0.0.11',
+19 silly publish      decaffeinate: '^3.3.2',
+19 silly publish      typescript: '^2.4.2',
+19 silly publish      sys: '^0.0.1',
+19 silly publish      async: '^2.5.0',
+19 silly publish      child_process: '^1.0.2' },
+19 silly publish   description: 'Embed Bower dependencies to your source code.',
+19 silly publish   devDependencies: {},
+19 silly publish   directories: {},
+19 silly publish   dist:
+19 silly publish    { shasum: '895d600f6587ffcd951b0a714be718dae8f1586b',
+19 silly publish      tarball: 'https://registry.npmjs.org/bindep/-/bindep-1.1.0.tgz' },
+19 silly publish   files: [ 'LICENSE', 'tasks/' ],
+19 silly publish   gitHead: '0b031aad918b9840becc702093acf65692355176',
+19 silly publish   homepage: 'https://github.com/publicocean0/bindep#readme',
+19 silly publish   keywords:
+19 silly publish    [ 'bower',
+19 silly publish      'dependencies',
+19 silly publish      'inject',
+19 silly publish      'management',
+19 silly publish      'package',
+19 silly publish      'script' ],
+19 silly publish   licenses: [ { type: 'MIT' } ],
+19 silly publish   maintainers: [ { name: 'publicocean0', email: 'publicocean0@gmail.com' } ],
+19 silly publish   name: 'bindep',
+19 silly publish   optionalDependencies: {},
+19 silly publish   readme: 'ERROR: No README data found!',
+19 silly publish   repository:
+19 silly publish    { type: 'git',
+19 silly publish      url: 'git+https://github.com/publicocean0/bindep.git' },
+19 silly publish   scripts: {},
+19 silly publish   version: '1.1.1' }
+20 verbose getPublishConfig undefined
+21 silly mapToRegistry name bindep
+22 silly mapToRegistry using default registry
+23 silly mapToRegistry registry http://registry.npmjs.org/
+24 silly mapToRegistry uri http://registry.npmjs.org/bindep
+25 verbose publish registryBase http://registry.npmjs.org/
+26 silly publish uploading /home/cristian/.npm/bindep/1.1.1/package.tgz
+27 verbose request uri http://registry.npmjs.org/bindep
+28 verbose request sending authorization for write operation
+29 info attempt registry request try #1 at 14:26:20
+30 verbose request using bearer token for auth
+31 verbose request id f29476b687fdb9f6
+32 http request PUT http://registry.npmjs.org/bindep
+33 http 403 http://registry.npmjs.org/bindep
+34 verbose headers { 'content-type': 'application/json',
+34 verbose headers   'cache-control': 'max-age=300',
+34 verbose headers   'content-length': '95',
+34 verbose headers   'accept-ranges': 'bytes',
+34 verbose headers   date: 'Fri, 28 Jul 2017 12:26:21 GMT',
+34 verbose headers   via: '1.1 varnish',
+34 verbose headers   connection: 'keep-alive',
+34 verbose headers   'x-served-by': 'cache-hhn1538-HHN',
+34 verbose headers   'x-cache': 'MISS',
+34 verbose headers   'x-cache-hits': '0',
+34 verbose headers   'x-timer': 'S1501244781.620233,VS0,VE1270',
+34 verbose headers   vary: 'Accept-Encoding, Accept' }
+35 verbose request invalidating /home/cristian/.npm/registry.npmjs.org/bindep on PUT
+36 error publish Failed PUT 403
+37 verbose stack Error: "You cannot publish over the previously published version 1.1.1." : bindep
+37 verbose stack     at makeError (/usr/share/npm/node_modules/npm-registry-client/lib/request.js:264:12)
+37 verbose stack     at CachingRegistryClient.<anonymous> (/usr/share/npm/node_modules/npm-registry-client/lib/request.js:252:14)
+37 verbose stack     at Request._callback (/usr/share/npm/node_modules/npm-registry-client/lib/request.js:172:14)
+37 verbose stack     at Request.self.callback (/usr/share/npm/node_modules/request/request.js:198:22)
+37 verbose stack     at emitTwo (events.js:87:13)
+37 verbose stack     at Request.emit (events.js:172:7)
+37 verbose stack     at Request.<anonymous> (/usr/share/npm/node_modules/request/request.js:1082:10)
+37 verbose stack     at emitOne (events.js:82:20)
+37 verbose stack     at Request.emit (events.js:169:7)
+37 verbose stack     at IncomingMessage.<anonymous> (/usr/share/npm/node_modules/request/request.js:1009:12)
+38 verbose statusCode 403
+39 verbose pkgid bindep
+40 verbose cwd /data/git/bindep
+41 error Linux 4.8.0-32-generic
+42 error argv "/usr/bin/nodejs" "/usr/bin/npm" "publish" "-force"
+43 error node v4.2.6
+44 error npm  v3.5.2
+45 error code E403
+46 error "You cannot publish over the previously published version 1.1.1." : bindep
+47 error If you need help, you may report this error at:
+47 error     <https://github.com/npm/npm/issues>
+48 verbose exit [ 1, true ]
