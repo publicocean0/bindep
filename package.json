@@ -62,7 +62,7 @@
     "decaffeinate":"^3.3.2",
     "typescript":"^2.4.2",
     "sys":"^0.0.1",
-   "async":"^2.5.0",
+   "sync":"^0.2.5",
     "child_process":"^1.0.2"
   },
   "description": "Embed Bower dependencies to your source code.",
@@ -105,5 +105,5 @@
     "url": "git+https://github.com/publicocean0/bindep.git"
   },
   "scripts": {},
-  "version": "1.1.2"
+  "version": "1.1.3"
 }
