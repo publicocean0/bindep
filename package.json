@@ -1,44 +1,107 @@
 {
-"name": "bindep",
-"version": "1.1.0",
-"description": "Embed Bower dependencies to your source code.",
-"repository": "publicocean0/bindep",
-"author": {
-"name": "Cristian Lorenzetto",
-"email": "publicocean0@gmail.com"
-},
-"keywords": [
-"bower",
-"package",
-"management",
-"inject",
-"script",
-"dependencies"
-],
-"files": [
-"tasks/",
-"LICENSE"
-],
-"licenses": [
-{
-"type": "MIT"
-}
-],
-"dependencies": {
-"bower-config": "^0.5.0",
-"glob": "^4.4.0",
-"lodash": "^2.4.1",
-"path": "^0.11.14",
-"fs": "^0.0.2",
-"MD5": "^1.0.0",
-"uglify-js": "^2.4.16",
-"uglifycss": "^0.0.11",
-"preprocessor":"^1.4.0 ",
-"less":"^2.7.2",
-"node-sass":"^4.3.0",
-"js-yaml":"^3.7.0",
-"styl":"^0.2.9",
-"md5-hex":"^2.0.0"
-
-}
+  "_args": [
+    [
+      "bindep@^1.1.0",
+      "/data/git/chat-js/test"
+    ]
+  ],
+  "_from": "bindep@>=1.1.0 <2.0.0",
+  "_id": "bindep@1.1.0",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/bindep",
+  "_nodeVersion": "4.2.6",
+  "_npmOperationalInternal": {
+    "host": "s3://npm-registry-packages",
+    "tmp": "tmp/bindep-1.1.0.tgz_1500625192561_0.6937997350469232"
+  },
+  "_npmUser": {
+    "email": "publicocean0@gmail.com",
+    "name": "publicocean0"
+  },
+  "_npmVersion": "3.5.2",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "bindep",
+    "raw": "bindep@^1.1.0",
+    "rawSpec": "^1.1.0",
+    "scope": null,
+    "spec": ">=1.1.0 <2.0.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_shasum": "895d600f6587ffcd951b0a714be718dae8f1586b",
+  "_shrinkwrap": null,
+  "_spec": "bindep@^1.1.0",
+  "_where": "/data/git/chat-js/test",
+  "author": {
+    "email": "publicocean0@gmail.com",
+    "name": "Cristian Lorenzetto"
+  },
+  "bugs": {
+    "url": "https://github.com/publicocean0/bindep/issues"
+  },
+  "dependencies": {
+	"bower":"^1.8.0", 
+    "MD5": "^1.0.0",
+    "bower-config": "^0.5.0",
+    "fs": "^0.0.2",
+    "glob": "^4.4.0",
+    "js-yaml": "^3.7.0",
+    "less": "^2.7.2",
+    "lodash": "^2.4.1",
+    "md5-hex": "^2.0.0",
+    "node-sass": "^4.3.0",
+    "path": "^0.11.14",
+    "preprocessor": "^1.4.0 ",
+    "styl": "^0.2.9",
+    "uglify-js": "^2.4.16",
+    "uglifycss": "^0.0.11",
+    "decaffeinate":"^3.3.2",
+    "sys":"^0.0.1",
+    "child_process":"^1.0.2"
+  },
+  "description": "Embed Bower dependencies to your source code.",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "895d600f6587ffcd951b0a714be718dae8f1586b",
+    "tarball": "https://registry.npmjs.org/bindep/-/bindep-1.1.0.tgz"
+  },
+  "files": [
+    "LICENSE",
+    "tasks/"
+  ],
+  "gitHead": "0b031aad918b9840becc702093acf65692355176",
+  "homepage": "https://github.com/publicocean0/bindep#readme",
+  "keywords": [
+    "bower",
+    "dependencies",
+    "inject",
+    "management",
+    "package",
+    "script"
+  ],
+  "licenses": [
+    {
+      "type": "MIT"
+    }
+  ],
+  "maintainers": [
+    {
+      "name": "publicocean0",
+      "email": "publicocean0@gmail.com"
+    }
+  ],
+  "name": "bindep",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/publicocean0/bindep.git"
+  },
+  "scripts": {},
+  "version": "1.1.0"
 }

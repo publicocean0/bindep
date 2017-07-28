@@ -4,7 +4,12 @@ var $ = {
     fs: require('fs'),
     lodash: require('lodash'),
     path: require('path'),
-    glob: require('glob')
+    glob: require('glob'),
+    bower: require("bower"),
+	bowerRenderer:require("bower/lib/renderers/StandardRenderer"),
+	async : require('async'),
+	proc : require('child_process'),
+	sync : require('sync')
 };
 /**
  * Detect dependencies of the components from `bower.json`.
@@ -82,6 +87,66 @@ function load(config) {
     });
     config.set('global-dependencies-sorted', sorted);
 }
+
+ var shellExecute =function(path,cmd){
+		       
+			    
+
+				
+				 var spawn = require('child_process').execSync;
+				console.log(spawn(cmd, {cwd:path ,encoding: 'utf8'}));
+				
+	
+		return 	
+		
+	}
+
+
+/*
+ var shellExecute =function(path,cmd){
+		       
+			    console.log('\t'+cmd)
+			function asyncFunction(callback) {
+				var proc = $.proc.spawn('ls', {cwd:path ,stdio:'inherit',encoding: 'utf8'});
+			    proc.stdin && proc.stdin.pipe(process.stdin);
+			    proc.stdout && proc.stdout.pipe(process.stdout);
+			    proc.stderr && proc.stderr.pipe(process.stderr);
+
+		
+
+		
+			
+				proc.on('close', function(code) {
+					console.log('closing code: ' + code);
+					callback(null);
+					
+				});
+				proc.on('exit', function(code) {
+					proc.stdin && proc.stdin.unpipe(process.stdin);
+				    proc.stdout && proc.stdout.unpipe(process.stdout);
+				    proc.stderr && proc.stderr.unpipe(process.stderr);
+					console.log('closing code: ' + code);
+					callback(null);
+					
+				});
+				proc.on('error', function(error) {
+					console.log('error: ' + error);
+					callback(null);
+					
+				});
+		//process.stdin.end();
+        
+	}
+	$.sync(function(){
+   
+      asyncFunction.sync();
+   
+	})
+		
+		return 	
+		
+	}
+*/
 /**
  * Find the component's JSON configuration file.
  *
@@ -120,20 +185,24 @@ function findComponentConfigLocal(config, component) {
 function retrieveFiles(value, cwd, ab) {
     var filePaths = [];
     if ($._.isString(value)) {
+		
         // start by looking for what every component should have: config.main
         filePaths = [value];
     } else if ($._.isArray(value)) {
         filePaths = value;
+        
     }
-
+ 
     var ret = $._.unique(filePaths.reduce(function(acc, filePath) {
-        acc = acc.concat(
-            $.glob.sync(filePath, {
+		var r= $.glob.sync(filePath, {
                 cwd: cwd,
                 root: '/',
                 nodir: true
             })
-            .map(function(path) {
+        if (r.length==0) throw new Error('impossible to find '+filePath+' in '+cwd);
+        acc = acc.concat(
+           
+            r.map(function(path) {
                 return (ab) ? $.path.join(cwd, path) : path;
             })
         );
@@ -176,9 +245,11 @@ function findFiles(componentConfigFile, cwd, prop, ab) {
 
 
     var value = componentConfigFile[prop];
-
+    
     if (value instanceof Array || $._.isString(value)) {
+      
         return retrieveFiles(value, cwd, ab);
+        
     } else if (typeof(value) == 'object') {
         var obj = {};
         for (var k in value) {
@@ -253,14 +324,28 @@ function gatherInfo(local, config) {
             componentConfigFile = findComponentConfigFile(config, component);
             local = false;
         }
+        
         if (!componentConfigFile) {
             var error = new Error(component + ' is not installed. Try running `bower install` or remove the component from your bower.json file.');
             error.code = 'PKG_NOT_INSTALLED';
-            throw error;
+           // throw error;
 
             return;
         }
-
+        
+        var cwd = local ? config.get('cwd') : $.path.join(config.get('bower-directory'), component);
+        var configurator=componentConfigFile.configurator || [];
+        if (configurator instanceof String ) configurator=[configurator.toString()]
+		if (typeof configurator=='string' ) configurator=[configurator]
+		if (configurator.length>0){
+	
+			configurator.forEach(function(command){
+		    console.log('Executing '+cwd+': '+command)
+			new shellExecute(cwd,command)	
+			});
+			
+		}
+		
         var overrides = config.get('overrides');
         if (overrides && overrides[component]) {
             if (overrides[component].dependencies) {
@@ -270,15 +355,26 @@ function gatherInfo(local, config) {
                 componentConfigFile.main = overrides[component].main;
             }
         }
-        var cwd = local ? config.get('cwd') : $.path.join(config.get('bower-directory'), component);
-        var mains = findFiles(componentConfigFile, cwd, 'main', true);
+        
+       
+        var mains,resources,modules;
+        try{
+
+        mains = findFiles(componentConfigFile, cwd, 'main', true);
+        	
         if (mains.length == 0) mains = findDefaultMainFiles(local, config, component, componentConfigFile, cwd);
+        resources = findFiles(componentConfigFile, cwd, 'resources', false);
+        modules = findModules(local, config, component, componentConfigFile, cwd);
+        } catch(e){
+		
+		throw new Error(component+':'+e.message)   
+		}
+       
         //if (mains.length==0) throw new Error("cannot find a valid path for component "+component);
         var fileTypes = $._.chain(mains).map($.path.extname).unique().value();
 
 
-        var resources = findFiles(componentConfigFile, cwd, 'resources', false);
-        var modules = findModules(local, config, component, componentConfigFile, cwd);
+      
         dep.cwd = cwd;
         dep.main = mains;
         dep.type = fileTypes;
@@ -344,6 +440,7 @@ function gatherInfo(local, config) {
 
 
         }
+       
         config.get('global-dependencies').set(component, dep);
     };
 }

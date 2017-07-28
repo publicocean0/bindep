@@ -4,6 +4,7 @@ module.exports = function(grunt) {
     var PARAM = /([a-z0-9\-]+)\s*\:\s*((true|false)|(\d+(\.\d+)?)|("((?:\\.|[^"\\\\])*))")/igm;
     var BLOCK = /^@bind:*(\S*)\s+(inline|linked)\s+(separated|aggregated)\s*(\s+(uglified|minified)\s*)?$/i;
     var DEPBLOCK = /^\s*((#.*)?|(([a-zA-Z0-9_\-.]+)(\s*\(\s*(([a-zA-Z0-9_\-.]+)(\s*,\s*([a-zA-Z0-9_\-.]+))*)?\s*\)\s*)?(\s*\[((=\~)|(!\~)|(==)|(!=)|(=\^)|(!\^)|(=\$)|(!\$)|(=\?)|(!\?))\s+"(.*)"\s*\])?(\s+nodeps)?(\s+nounique)?(\s+preprocess\s*\(\s*(([a-z0-9\-]+\s*\:\s*((true|false)|(\d+(\.\d+)?)|("((?:\\.|[^"\\\\])*)")))(\s+([a-z0-9\-]+\s*\:\s*(true|false)|(\d+(\.\d+)?)|("((?:\\.|[^"\\\\])*)")))*)?\s*\))?\s*))$/i;
+
     var md5 = require('md5-hex');
     var jsParser = require("uglify-js");
     var cssParser = require('uglifycss');
@@ -11,6 +12,9 @@ module.exports = function(grunt) {
     var styl = require("styl");
     var yaml = require('js-yaml');
     var sass = require('node-sass');
+    var coffe= require('decaffeinate')
+    var ts = require('typescript')
+ 
     less.logger.addListener({
         debug: console.log,
         info: console.log,
@@ -25,11 +29,21 @@ module.exports = function(grunt) {
         glob: require('glob'),
         preprocessor: require('preprocessor')
     };
+    
+   
     var stylExecute = function(f, source) {
         var s = source instanceof Buffer ? source.toString('utf-8') : source;
         return styl(s, {
             whitespace: true
         });
+    }
+    var coffeeExecute = function(f, source) {
+        var s = source instanceof Buffer ? source.toString('utf-8') : source;
+        return coffee.convert(s).code;
+    }
+    var tsExecute = function(f, source) {
+        var s = source instanceof Buffer ? source.toString('utf-8') : source;
+        return ts.transpileModule(source, {}).outputText;
     }
     var yalmExecute = function(f, source) {
         var s = source instanceof Buffer ? source.toString('utf-8') : source;
@@ -95,6 +109,14 @@ module.exports = function(grunt) {
                 },
                 yalm: {
                     execute: yalmExecute,
+                    type: 'js'
+                },
+                coffee: {
+                    execute: coffeeExecute,
+                    type: 'js'
+                },
+                ts: {
+                    execute: tsExecute,
                     type: 'js'
                 }
 
@@ -307,7 +329,7 @@ module.exports = function(grunt) {
 			do {
 			 pos=repl.indexOf(token,p)	
 			 if (pos>=0){
-				repl=repl.substring(p,pos)+source  + options.separator+repl.substring(pos+token.length)
+				repl=repl.substring(p,pos)+source  +repl.substring(pos+token.length)
 				p=pos+source.length
 			 } else break;
 				
@@ -451,14 +473,16 @@ module.exports = function(grunt) {
                 }
                 if (gdeps[blocktype][name] == undefined) gdeps[blocktype][name] = [];
 
-
+   
                 var mains = depi.main.concat(convertedMains(blocktype, name));
-                var preprocessContext = depi.defaults.preprocessorContext||{};
-                var preprocessEnabled=depi.defaults.enablePreprocessor || false
-                
+                var component=submodulesdef[name];
+               
+                var preprocessContext = component &&component.defaults &&component.defaults.preprocessorContext?component.defaults.preprocessorContext:(depi.defaults.preprocessorContext||{});
+                var preprocessEnabled=component &&component.defaults &&typeof(component.defaults.enablePreprocessor)=='boolean'?component.defaults.enablePreprocessor: (depi.defaults.enablePreprocessor|| false)
+           
                 var modulesdeps = {};
                 var cwd = depi.cwd;
-                var modules = submodulesdef[name] ? submodulesdef[name] : (depi.defaults.modules || []);
+                var modules = component &&component.modules? component.modules : (depi.defaults.modules || []);
                 modules.forEach(function(e) {
                     var sm = depi.modules[e];
 
@@ -489,6 +513,7 @@ module.exports = function(grunt) {
 
                 for (j = 0; j < mains.length; j++) {
                     var m = mains[j];
+                   
                     if (gdeps[blocktype][name].indexOf(m) >= 0) continue;
                     attachmentsInjected += 1;
                     var rind = smains.indexOf(m);
@@ -503,7 +528,7 @@ module.exports = function(grunt) {
 
                     var bf = removeExtension(getFileName(m));
                     if (!options.shortLinks) bf = name + "." + bf;
-
+					
                     buffer = inject(replacetype, aggrtype, buffer, repl, bf, ismini, blocktype, commands, collapsedFiles, m, dest, minified, ext, preprocessContext,preprocessEnabled);
 
                 }
@@ -623,7 +648,7 @@ module.exports = function(grunt) {
                     var filter = match[22];
                     var op = match[11];
                     var nodependencies = match[23] != null;
-                    var submodulesdef = dep.defaults.submodules || {};
+                    var submodulesdef = dep.defaults.components || {};
                     var preprocessContext = getObject(match[26]);
                     var enablePreprocess=preprocessContext && typeof(preprocessContext)=='object';
                    
@@ -661,8 +686,8 @@ module.exports = function(grunt) {
                     for (var k in resources) {
                         r = options.resources[k];
                         rr = resources[k];
-
-                        if (r == undefined) throw new Error("resource type " + k + " not defined");
+                 
+                        if (r == undefined) throw new Error("resource type " + k + " not defined in the main (define the target folder)");
                         rr.forEach(function(e) {
                             res[cwd + '/' + e] = getAbsolutePath(r.target) + '/' + depname + '/' + getSuffix(e);
 
@@ -955,24 +980,26 @@ module.exports = function(grunt) {
                     {
                         var source;
                         var type = getFileType(c.source);
-                        source = $.fs.readFileSync(c.source).toString();
-                       
+                        source = $.fs.readFileSync(c.source);// can be a resource(binary) or not
+
                         var converter = options.converters[type];
-                        if (converter) source = converter.execute(c.source, source);
+                        if (converter) source = converter.execute(c.source, source.toString());
                         if (c.minified !== undefined && c.minified) {
 								
                             if (c.preprocessEnabled) {
-							
-                                source = preprocessor($.path.dirname(c.source),source, c.preprocessContext);
+							   
+                                source = preprocessor($.path.dirname(c.source),typeof(source)=='object'?source.toString():source, c.preprocessContext);
                             }
                             
-                            source = options.minifyHandlers[getFileType(c.source)](source, c.minified !== 'minified');
+                            source = options.minifyHandlers[getFileType(c.source)](typeof(source)=='object'?source.toString():source, c.minified !== 'minified');
                              
                             if (save(source, c.dest)) grunt.log.writeln('\t-' + c.dest + ((converter) ? ' converted and saved' : ' saved'));
                             else grunt.log.writeln('\t-' + c.dest + ' unchanged');
                         } else {
                             if (c.preprocessEnabled) {
-                                source = preprocessor($.path.dirname(c.source),source, c.preprocessContext);
+							
+                                source = preprocessor($.path.dirname(c.source),typeof(source)=='object'?source.toString():source, c.preprocessContext);
+                               
                             }
                             if (save(source, c.dest, c.binary)) grunt.log.writeln('\t-' + c.dest + ((converter) ? ' converted and saved' : ' saved'));
                             else grunt.log.writeln('\t-' + c.dest + ' unchanged');
@@ -1029,7 +1056,7 @@ module.exports = function(grunt) {
         }
 
         function preprocessor(path,source, context) {
-            
+          
             var pp = new $.preprocessor(source, path||'.');
             return pp.process(context);
 
