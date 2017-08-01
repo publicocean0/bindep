@@ -54,6 +54,7 @@ It is born (original name was grunt-resourcesbinder) for my needs using a high m
    "preview":{
    "main":["js/preview.js"],
    "dependencies":{ "moment":"^1.0.0" },
+    "imports":{ "ababa":"^1.0.0" },//it permits to add a source in the folder withtout inject linking in the template (usefull for dynamic source loading)
    "resources":{
    "mp3":["audio2.mp3","audio3,mp3"],
    "require":[....]
