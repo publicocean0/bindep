@@ -321,10 +321,11 @@ module.exports = function(grunt) {
 
         function renderLinkFile(depname, mimified, filetype, preprocessContext,preprocessEnabled) {
             var f = depname + "." + (mimified ? 'min.' : '') + filetype;
-            return preprocessEnabled ? getUniqueDest(f, preprocessContext) : f;
+            return (preprocessEnabled ? getUniqueDest(f, preprocessContext) : f);
         }
         
         function replace(token,repl,source){
+			
 			var pos,p=0;
 			do {
 			 pos=repl.indexOf(token,p)	
@@ -1092,19 +1093,19 @@ module.exports = function(grunt) {
 
             for (var j = 0; j < files.length; j++) {
                 var res = files[j].match(/^[^**]*/);
-                var basename = $.path.parse(res[0]).dir;
-                
+                var basename = res[0];
+                console.log('**********',basename,files[j],target,res[0])
                 var mfiles = grunt.file.expandMapping(files[j], target, {
                     rename: function(destBase, destPath) {
+						
 						var d=destPath.replace(basename||destBase, '');
 						var file=$.path.parse(d)
-					
-                        return ext?destBase + file.name+'.'+ext:destBase + file.name+file.ext;
+					    console.log(destBase,destPath,d,file)
+                        return ext?target+file.dir +'/'+ file.name+'.'+ext:target+file.dir +'/'+ file.name+file.ext;
                     }
                 });
 
-				
-
+			
                 mfiles.forEach(function(filemap) {
                     var filepath = currentDir + filemap.src;
                     if (!grunt.file.exists(filepath)) {

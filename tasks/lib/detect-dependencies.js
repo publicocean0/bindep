@@ -349,17 +349,25 @@ function gatherInfo(local, config) {
         }
           var cwd = local ? config.get('cwd') : $.path.join(config.get('bower-directory'), component);
     
+        var mains=null,resources,modules,imports;
         
+       
         var configurator=componentConfigFile.configurator || [];
         if (configurator instanceof String ) configurator=[configurator.toString()]
 		if (typeof configurator=='string' ) configurator=[configurator]
 		if (configurator.length>0){
-	
+	       try {
+	        mains = findFiles(componentConfigFile, cwd, 'main', true);
+        	
+            if (mains.length == 0) mains = findDefaultMainFiles(local, config, component, componentConfigFile, cwd);
+		} catch(e){}
+			if (mains.length==0){
+			mains=null;
 			configurator.forEach(function(command){
 		    console.log('Executing '+cwd+': '+command)
 			new shellExecute(cwd,command)	
 			});
-			
+		}
 		}
 		
         var overrides = config.get('overrides');
@@ -373,12 +381,14 @@ function gatherInfo(local, config) {
         }
         
        
-        var mains,resources,modules,imports;
+    
         try{
-
-        mains = findFiles(componentConfigFile, cwd, 'main', true);
+       
+        if (!mains){
+			 mains = findFiles(componentConfigFile, cwd, 'main', true);
         	
-        if (mains.length == 0) mains = findDefaultMainFiles(local, config, component, componentConfigFile, cwd);
+             if (mains.length == 0) mains = findDefaultMainFiles(local, config, component, componentConfigFile, cwd);
+	    }
         resources = findFiles(componentConfigFile, cwd, 'resources', false);
         modules = findModules(local, config, component, componentConfigFile, cwd);
 
