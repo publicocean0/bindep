@@ -5,9 +5,6 @@ var $ = {
     lodash: require('lodash'),
     path: require('path'),
     glob: require('glob'),
-    bower: require("bower"),
-	bowerRenderer:require("bower/lib/renderers/StandardRenderer"),
-	async : require('async'),
 	proc : require('child_process'),
 	sync : require('sync')
 };
@@ -229,17 +226,24 @@ function findModules(local, config, component, componentConfigFile, cwd) {
             name: k,
             main: mains,
             dependencies: {},
+            imports:{},
             require: findRequire(componentConfigFile, k, mm)
         }
         if (mm.dependencies) {
             modules[k].dependencies = mm.dependencies;
             $._.each(mm.dependencies, gatherInfo(local, config));
         }
+         if (mm.imports) {
+            modules[k].imports = mm.imports;
+            $._.each(mm.imports, gatherInfo(local, config));
+        }
     }
 
     return modules;
 
 }
+
+
 
 function findFiles(componentConfigFile, cwd, prop, ab) {
 
@@ -313,7 +317,8 @@ function gatherInfo(local, config) {
             dependencies: {},
             resources: {},
             modules: {},
-            defaults: {}
+            defaults: {},
+            imports:{}
         };
 
         if (dep.name == '') dep.name = component;
@@ -324,16 +329,27 @@ function gatherInfo(local, config) {
             componentConfigFile = findComponentConfigFile(config, component);
             local = false;
         }
-        
-        if (!componentConfigFile) {
+          if (!componentConfigFile) {
+			console.log('installing '+component+" ...");
+			shellExecute(undefined,'bower install '+component);
+			componentConfigFile = (local) ? findComponentConfigLocal(config, component) : findComponentConfigFile(config, component);
+			if (!componentConfigFile && local) {
+
+				componentConfigFile = findComponentConfigFile(config, component);
+				local = false;
+			}
+			
+			 if (!componentConfigFile) {
             var error = new Error(component + ' is not installed. Try running `bower install` or remove the component from your bower.json file.');
             error.code = 'PKG_NOT_INSTALLED';
-           // throw error;
+            throw error;
 
             return;
+		}
         }
+          var cwd = local ? config.get('cwd') : $.path.join(config.get('bower-directory'), component);
+    
         
-        var cwd = local ? config.get('cwd') : $.path.join(config.get('bower-directory'), component);
         var configurator=componentConfigFile.configurator || [];
         if (configurator instanceof String ) configurator=[configurator.toString()]
 		if (typeof configurator=='string' ) configurator=[configurator]
@@ -357,7 +373,7 @@ function gatherInfo(local, config) {
         }
         
        
-        var mains,resources,modules;
+        var mains,resources,modules,imports;
         try{
 
         mains = findFiles(componentConfigFile, cwd, 'main', true);
@@ -365,6 +381,7 @@ function gatherInfo(local, config) {
         if (mains.length == 0) mains = findDefaultMainFiles(local, config, component, componentConfigFile, cwd);
         resources = findFiles(componentConfigFile, cwd, 'resources', false);
         modules = findModules(local, config, component, componentConfigFile, cwd);
+
         } catch(e){
 		
 		throw new Error(component+':'+e.message)   
@@ -381,6 +398,7 @@ function gatherInfo(local, config) {
         dep.resources = resources;
         dep.modules = modules;
         dep.name = componentConfigFile.name;
+
         dep.defaults = componentConfigFile.defaults || {};
 
         var depIsExcluded = $._.find(config.get('exclude'), function(pattern) {
@@ -389,7 +407,13 @@ function gatherInfo(local, config) {
 
         if (componentConfigFile.dependencies) {
             dep.dependencies = componentConfigFile.dependencies;
+         
             $._.each(componentConfigFile.dependencies, gatherInfo(local, config));
+        }
+          if (componentConfigFile.imports) {
+            dep.imports = componentConfigFile.imports;
+           
+            $._.each(componentConfigFile.imports, gatherInfo(local, config));
         }
         var cwd = $.path.join((local) ? config.get('cwd') : config.get('bower-directory'), component);
         var packageHandler = config.get('package-handler');

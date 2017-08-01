@@ -1,19 +1,23 @@
 {
   "_args": [
     [
+      "bindep@1.1.3",
+      "/data/git/chat-js/test"
+    ],
+    [
       "bindep@^1.1.1",
       "/data/git/chat-js/test"
     ]
   ],
-  "_from": "bindep@>=1.1.0 <2.0.0",
-  "_id": "bindep@1.1.0",
+  "_from": "bindep@1.1.3",
+  "_id": "bindep@1.1.3",
   "_inCache": true,
   "_installable": true,
   "_location": "/bindep",
   "_nodeVersion": "4.2.6",
   "_npmOperationalInternal": {
     "host": "s3://npm-registry-packages",
-    "tmp": "tmp/bindep-1.1.0.tgz_1500625192561_0.6937997350469232"
+    "tmp": "tmp/bindep-1.1.3.tgz_1501245058376_0.6066965209320188"
   },
   "_npmUser": {
     "email": "publicocean0@gmail.com",
@@ -23,18 +27,17 @@
   "_phantomChildren": {},
   "_requested": {
     "name": "bindep",
-    "raw": "bindep@^1.1.0",
-    "rawSpec": "^1.1.0",
+    "raw": "bindep@1.1.3",
+    "rawSpec": "1.1.3",
     "scope": null,
-    "spec": ">=1.1.0 <2.0.0",
-    "type": "range"
+    "spec": "1.1.3",
+    "type": "version"
   },
   "_requiredBy": [
     "/"
   ],
-  "_shasum": "895d600f6587ffcd951b0a714be718dae8f1586b",
   "_shrinkwrap": null,
-  "_spec": "bindep@^1.1.0",
+  "_spec": "bindep@1.1.3",
   "_where": "/data/git/chat-js/test",
   "author": {
     "email": "publicocean0@gmail.com",
@@ -44,9 +47,11 @@
     "url": "https://github.com/publicocean0/bindep/issues"
   },
   "dependencies": {
-	"bower":"^1.8.0", 
     "MD5": "^1.0.0",
+    "bower": "^1.8.0",
     "bower-config": "^0.5.0",
+    "child_process": "^1.0.2",
+    "decaffeinate": "^3.3.2",
     "fs": "^0.0.2",
     "glob": "^4.4.0",
     "js-yaml": "^3.7.0",
@@ -57,20 +62,18 @@
     "path": "^0.11.14",
     "preprocessor": "^1.4.0 ",
     "styl": "^0.2.9",
+    "sync": "^0.2.5",
+    "sys": "^0.0.1",
+    "typescript": "^2.4.2",
     "uglify-js": "^2.4.16",
-    "uglifycss": "^0.0.11",
-    "decaffeinate":"^3.3.2",
-    "typescript":"^2.4.2",
-    "sys":"^0.0.1",
-   "sync":"^0.2.5",
-    "child_process":"^1.0.2"
+    "uglifycss": "^0.0.11"
   },
   "description": "Embed Bower dependencies to your source code.",
   "devDependencies": {},
   "directories": {},
   "dist": {
-    "shasum": "895d600f6587ffcd951b0a714be718dae8f1586b",
-    "tarball": "https://registry.npmjs.org/bindep/-/bindep-1.1.0.tgz"
+    "shasum": "9e6fdc5d4369488f6abb8f247938a76893c69fad",
+    "tarball": "https://registry.npmjs.org/bindep/-/bindep-1.1.3.tgz"
   },
   "files": [
     "LICENSE",
@@ -105,5 +108,5 @@
     "url": "git+https://github.com/publicocean0/bindep.git"
   },
   "scripts": {},
-  "version": "1.1.3"
+  "version": "1.1.4"
 }

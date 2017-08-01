@@ -409,11 +409,11 @@ module.exports = function(grunt) {
             } else return mains;
         }
 
-        function inject(replacetype, aggrtype, buffer, repl, bf, ismini, blocktype, commands, collapsedFiles, m, dest, minified, ext, _preprocessContext,_preprocessEnabled) {
+        function inject(replacetype, aggrtype, buffer, repl, bf, ismini, blocktype, commands, collapsedFiles, m, dest, minified, ext, _preprocessContext,_preprocessEnabled,unbind) {
 
-            if (replacetype === 'linked') {
-                if (aggrtype == 'separated') {
-                    buffer += getLinkReplacement(repl, bf, ismini, blocktype, _preprocessContext,_preprocessEnabled);
+            if (replacetype === 'linked'||unbind) {
+                if (aggrtype == 'separated'||unbind) {
+                    if (!unbind) buffer += getLinkReplacement(repl, bf, ismini, blocktype, _preprocessContext,_preprocessEnabled);
                     commands.push({
                         command: 'cp',
                         source: m,
@@ -456,7 +456,8 @@ module.exports = function(grunt) {
             return e;
         }
 
-        function processDeps(subdeps, smains, norepeat, ftypedeps, adeps, gdeps, blocktype, found, buffer, replacetype, aggrtype, repl, ismini, commands, collapsedFiles, dest, minified, ext, submodulesdef) {
+        function processDeps(subdeps, smains, norepeat, ftypedeps, adeps, gdeps, blocktype, found, buffer, replacetype, aggrtype, repl, ismini, commands, collapsedFiles, dest, minified, ext, submodulesdef,imports) {
+         
             var attachmentsInjected = 0;
             for (var i = 0; i < subdeps.length; i++) {
                 var name = subdeps[i].name;
@@ -508,9 +509,13 @@ module.exports = function(grunt) {
                     for (var k in sm.dependencies) {
                         modulesdeps[k] = sm.dependencies[k];
                     }
+                    for (var k in sm.imports) {
+                       imports[k] = sm.dependencies[k];
+                    }
                 });
 
-
+                var unbind= typeof(imports[name])!='undefined'
+                  
                 for (j = 0; j < mains.length; j++) {
                     var m = mains[j];
                    
@@ -524,12 +529,12 @@ module.exports = function(grunt) {
                         grunt.log.writeln();
                     }
 
-                    grunt.log.writeln('\t\t\t-Attachment  \'' + m + "'");
+                    grunt.log.writeln('\t\t\t-Attachment'+(unbind?'*':'')+'  \'' + m + "'");
 
                     var bf = removeExtension(getFileName(m));
                     if (!options.shortLinks) bf = name + "." + bf;
 					
-                    buffer = inject(replacetype, aggrtype, buffer, repl, bf, ismini, blocktype, commands, collapsedFiles, m, dest, minified, ext, preprocessContext,preprocessEnabled);
+                    buffer = inject(replacetype, aggrtype, buffer, repl, bf, ismini, blocktype, commands, collapsedFiles, m, dest, minified, ext, preprocessContext,preprocessEnabled,unbind);
 
                 }
 
@@ -693,7 +698,10 @@ module.exports = function(grunt) {
 
                         });
                     }
-                    var modulesdeps = {};
+                    var modulesdeps = {},imports={};
+                     for (var k in dep.imports) {
+                            imports[k] = dep.imports[k];
+                        }
                     modules.forEach(function(e) {
                         var sm = dep.modules[e];
 
@@ -704,10 +712,7 @@ module.exports = function(grunt) {
                             if (notmatch) throw new Error("module type " + e + " requires the module " + notmatch);
                         }
                         var resources = sm.resources;
-                        sm.main.forEach(function(f1) {
-                            var f = cwd + '/' + f1;
-                            if (smains.indexOf(f) < 0 && $.path.extname(f) == '.' + blocktype) smains.push(f);
-                        });
+                     
                         for (var k in resources) {
                             r = options.resources[k];
                             rr = resources[k];
@@ -718,6 +723,9 @@ module.exports = function(grunt) {
                         }
                         for (var k in sm.dependencies) {
                             modulesdeps[k] = sm.dependencies[k];
+                        }
+                        for (var k in sm.imports) {
+                            imports[k] = sm.imports[k];
                         }
                     });
 
@@ -732,7 +740,7 @@ module.exports = function(grunt) {
 
 
                     if (!nodependencies) {
-                        var res1 = processDeps(subdeps, smains, norepeat, ftypedeps, adeps, gdeps, blocktype, found, buffer, replacetype, aggrtype, repl, ismini, commands, collapsedFiles, dest, minified, ext, submodulesdef);
+                        var res1 = processDeps(subdeps, smains, norepeat, ftypedeps, adeps, gdeps, blocktype, found, buffer, replacetype, aggrtype, repl, ismini, commands, collapsedFiles, dest, minified, ext, submodulesdef,imports);
                         found = res1.found;
                         attachmentsInjected += res1.attachmentsInjected;
                         buffer = res1.buffer;
@@ -740,7 +748,17 @@ module.exports = function(grunt) {
                         for (var k in modulesdeps) mdeps.push({
                             name: k
                         });
-                        res1 = processDeps(mdeps, smains, norepeat, ftypedeps, adeps, gdeps, blocktype, found, buffer, replacetype, aggrtype, repl, ismini, commands, collapsedFiles, dest, minified, ext, submodulesdef);
+              
+                        res1 = processDeps(mdeps, smains, norepeat, ftypedeps, adeps, gdeps, blocktype, found, buffer, replacetype, aggrtype, repl, ismini, commands, collapsedFiles, dest, minified, ext, submodulesdef,imports);
+                        found = res1.found;
+                        attachmentsInjected += res1.attachmentsInjected;
+                        buffer = res1.buffer;
+                           mdeps = [];
+                        for (var k in imports) mdeps.push({
+                            name: k
+                        });
+               
+                        res1 = processDeps(mdeps, smains, norepeat, ftypedeps, adeps, gdeps, blocktype, found, buffer, replacetype, aggrtype, repl, ismini, commands, collapsedFiles, dest, minified, ext, submodulesdef,imports);
                         found = res1.found;
                         attachmentsInjected += res1.attachmentsInjected;
                         buffer = res1.buffer;
@@ -767,21 +785,28 @@ module.exports = function(grunt) {
                         buffer = inject(replacetype, aggrtype, buffer, repl, bf, ismini, blocktype, commands, collapsedFiles, m, dest, minified, ext, preprocessContext,enablePreprocess);
                     }
 
-
-                    for (i = 0; i < smains.length; i++) {
-                        var m = smains[i];
-                        if (gdeps[blocktype][depname].indexOf(m) >= 0) continue;
-                        attachmentsInjected += 1;
-                        if (!found) {
-                            found = true;
-                            grunt.log.writeln();
+					   modules.forEach(function(e) {
+                        var sm = dep.modules[e];
+                           sm.main.forEach(function(f1) {
+                            var m = cwd + '/' + f1;
+                            if (smains.indexOf(m) < 0 && $.path.extname(m) == '.' + blocktype) {
+								smains.push(m);
+								//if (gdeps[blocktype][depname].indexOf(m) >= 0) return true;
+								attachmentsInjected += 1;
+								if (!found) {
+									found = true;
+									grunt.log.writeln();
                         }
-                        grunt.log.writeln('\t\t\t-Attachment  \'' + m + "'");
+                        grunt.log.writeln('\t\t\t-Attachment('+e+')  \'' + m + "'");
                         var bf = removeExtension(getFileName(m));
                         if (!options.shortLinks) bf = depname + "." + bf;
-
+                 
                         buffer = inject(replacetype, aggrtype, buffer, repl, bf, ismini, blocktype, commands, collapsedFiles, m, dest, minified, ext, preprocessContext,enablePreprocess);
-                    }
+
+							}
+                        });
+                     });
+                  
 
 
                     if (attachmentsInjected == 0) {
