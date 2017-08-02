@@ -1094,7 +1094,7 @@ module.exports = function(grunt) {
             for (var j = 0; j < files.length; j++) {
                 var res = files[j].match(/^[^**]*/);
                 var basename = res[0];
-                console.log('**********',basename,files[j],target,res[0])
+              
                 var mfiles = grunt.file.expandMapping(files[j], target, {
                     rename: function(destBase, destPath) {
 						
