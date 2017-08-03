@@ -385,7 +385,7 @@ function gatherInfo(local, config) {
         try{
        
         if (!mains){
-			console.log(component,componentConfigFile.main)
+			//console.log(component,componentConfigFile.main)
 			 mains = findFiles(componentConfigFile, cwd, 'main', true)||[];
         	 
              if (mains.length == 0) mains = findDefaultMainFiles(local, config, component, componentConfigFile, cwd);

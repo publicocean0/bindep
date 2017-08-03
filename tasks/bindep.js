@@ -1103,7 +1103,7 @@ module.exports = function(grunt) {
 					   // console.log(destBase,'|',destPath,'|',d,'|',ext,target)
 					    if (ext){
 							var i=d.lastIndexOf('.')
-							console.log(destPath,d,target+d.substring(0,i)+ext)
+							//console.log(destPath,d,target+d.substring(0,i)+ext)
 							if (i>=0) return d.substring(0,i)+'.'+ext
 							return d+'.'+ext
 						} else {
