@@ -361,7 +361,7 @@ function gatherInfo(local, config) {
         	
             if (mains.length == 0) mains = findDefaultMainFiles(local, config, component, componentConfigFile, cwd);
 		} catch(e){}
-			if (mains.length==0){
+			if (!mains ||mains.length==0){
 			mains=null;
 			configurator.forEach(function(command){
 		    console.log('Executing '+cwd+': '+command)
@@ -385,8 +385,9 @@ function gatherInfo(local, config) {
         try{
        
         if (!mains){
-			 mains = findFiles(componentConfigFile, cwd, 'main', true);
-        	
+			console.log(component,componentConfigFile.main)
+			 mains = findFiles(componentConfigFile, cwd, 'main', true)||[];
+        	 
              if (mains.length == 0) mains = findDefaultMainFiles(local, config, component, componentConfigFile, cwd);
 	    }
         resources = findFiles(componentConfigFile, cwd, 'resources', false);

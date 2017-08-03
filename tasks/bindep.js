@@ -1097,11 +1097,19 @@ module.exports = function(grunt) {
               
                 var mfiles = grunt.file.expandMapping(files[j], target, {
                     rename: function(destBase, destPath) {
-						
-						var d=destPath.replace(basename||destBase, '');
-						var file=$.path.parse(d)
-					    console.log(destBase,destPath,d,file)
-                        return ext?target+file.dir +'/'+ file.name+'.'+ext:target+file.dir +'/'+ file.name+file.ext;
+						var file =destBase+destPath;
+						//console.log(file)
+						var d=file.replace(basename||'', '');
+					   // console.log(destBase,'|',destPath,'|',d,'|',ext,target)
+					    if (ext){
+							var i=d.lastIndexOf('.')
+							console.log(destPath,d,target+d.substring(0,i)+ext)
+							if (i>=0) return d.substring(0,i)+'.'+ext
+							return d+'.'+ext
+						} else {
+							return d;
+						}
+                        
                     }
                 });
 
