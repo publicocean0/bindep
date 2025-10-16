@@ -1,112 +1,49 @@
 {
-  "_args": [
-    [
-      "bindep@1.1.3",
-      "/data/git/chat-js/test"
-    ],
-    [
-      "bindep@^1.1.1",
-      "/data/git/chat-js/test"
-    ]
-  ],
-  "_from": "bindep@1.1.3",
-  "_id": "bindep@1.1.3",
-  "_inCache": true,
-  "_installable": true,
-  "_location": "/bindep",
-  "_nodeVersion": "4.2.6",
-  "_npmOperationalInternal": {
-    "host": "s3://npm-registry-packages",
-    "tmp": "tmp/bindep-1.1.3.tgz_1501245058376_0.6066965209320188"
-  },
-  "_npmUser": {
-    "email": "publicocean0@gmail.com",
-    "name": "publicocean0"
-  },
-  "_npmVersion": "3.5.2",
-  "_phantomChildren": {},
-  "_requested": {
-    "name": "bindep",
-    "raw": "bindep@1.1.3",
-    "rawSpec": "1.1.3",
-    "scope": null,
-    "spec": "1.1.3",
-    "type": "version"
-  },
-  "_requiredBy": [
-    "/"
-  ],
-  "_shrinkwrap": null,
-  "_spec": "bindep@1.1.3",
-  "_where": "/data/git/chat-js/test",
-  "author": {
-    "email": "publicocean0@gmail.com",
-    "name": "Cristian Lorenzetto"
-  },
-  "bugs": {
-    "url": "https://github.com/publicocean0/bindep/issues"
-  },
-  "dependencies": {
-    "MD5": "^1.0.0",
-    "bower": "^1.8.0",
-    "bower-config": "^0.5.0",
-    "child_process": "^1.0.2",
-    "decaffeinate": "^3.3.2",
-    "fs": "^0.0.2",
-    "glob": "^4.4.0",
-    "js-yaml": "^3.7.0",
-    "less": "^2.7.2",
-    "lodash": "^2.4.1",
-    "md5-hex": "^2.0.0",
-    "node-sass": "^4.3.0",
-    "path": "^0.11.14",
-    "preprocessor": "^1.4.0 ",
-    "styl": "^0.2.9",
-    "sync": "^0.2.5",
-    "sys": "^0.0.1",
-    "typescript": "^2.4.2",
-    "uglify-js": "^2.4.16",
-    "uglifycss": "^0.0.11"
-  },
-  "description": "Embed Bower dependencies to your source code.",
-  "devDependencies": {},
-  "directories": {},
-  "dist": {
-    "shasum": "9e6fdc5d4369488f6abb8f247938a76893c69fad",
-    "tarball": "https://registry.npmjs.org/bindep/-/bindep-1.1.3.tgz"
-  },
-  "files": [
-    "LICENSE",
-    "tasks/"
-  ],
-  "gitHead": "0b031aad918b9840becc702093acf65692355176",
-  "homepage": "https://github.com/publicocean0/bindep#readme",
-  "keywords": [
-    "bower",
-    "dependencies",
-    "inject",
-    "management",
-    "package",
-    "script"
-  ],
-  "licenses": [
-    {
-      "type": "MIT"
-    }
-  ],
-  "maintainers": [
-    {
-      "name": "publicocean0",
-      "email": "publicocean0@gmail.com"
-    }
-  ],
   "name": "bindep",
-  "optionalDependencies": {},
-  "readme": "ERROR: No README data found!",
+  "version": "2.0.0-alpha.0",
+  "description": "Modern asset attachment orchestrator for @bind tags.",
+  "type": "module",
+  "bin": {
+    "bindep": "./bin/bindep.js"
+  },
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "bind",
+    "assets",
+    "orchestration",
+    "frontend",
+    "tooling"
+  ],
+  "author": {
+    "name": "Bindep maintainers"
+  },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/publicocean0/bindep.git"
   },
-  "scripts": {},
-  "version": "1.1.8"
+  "bugs": {
+    "url": "https://github.com/publicocean0/bindep/issues"
+  },
+  "homepage": "https://github.com/publicocean0/bindep#readme",
+  "typeScriptVersion": "5.0",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "commander": "^11.1.0",
+    "globby": "^13.2.2",
+    "picocolors": "^1.0.0"
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md",
+    "LICENSE"
+  ]
 }
